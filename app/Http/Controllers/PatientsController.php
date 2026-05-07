@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Patients;
+use App\Models\Patient;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -14,27 +14,27 @@ class PatientsController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Patients::with('user');
+        $query = Patient::query();
 
-        // ✅ Filter by status
-        if ($request->status) {
+        // Search by name or email
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('first_name', 'like', "%{$search}%")
+                    ->orWhere('last_name',  'like', "%{$search}%")
+                    ->orWhere('email',      'like', "%{$search}%");
+            });
+        }
+
+        // Filter by status
+        if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
 
-        // ✅ Search
-        // if ($request->search) {
-        //     $query->where(function ($q) use ($request) {
-        //         $q->where('name', 'like', '%' . $request->search . '%')
-        //           ->orWhere('email', 'like', '%' . $request->search . '%');
-        //     });
-        // }
-
-        // ✅ Pagination + latest
-        $patients = $query->latest()->paginate(10)->withQueryString();
+        $patients = $query->latest()->paginate(15)->withQueryString();
 
         return view('admin.patients.index', compact('patients'));
     }
-
     /**
      * Show the form for creating a new resource.
      */
@@ -62,7 +62,7 @@ class PatientsController extends Controller
         ]);
 
         $validatedData['user_id'] = Auth::id();
-        Patients::create($validatedData);
+        Patient::create($validatedData);
 
         return redirect()->route('admin.patients.index')->with('success', 'Patient created successfully.');
     }
@@ -70,63 +70,42 @@ class PatientsController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Patients $patients)
+    public function show(Patient $patient)
     {
-        return view('admin.patients.index', compact('patients'));
+        return view('admin.patients.index', compact('patient'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Patients $patients)
+    public function edit(Patient $patient)
     {
-        return view('admin.patients.create', compact('patients'));
+        return view('admin.patients.edit', compact('patient'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-
-
-    public function update(Request $request, Patients $patients)
+    public function update(Request $request, Patient $patient)
     {
-        $validatedData = $request->validate([
-            'first_name' => 'required|string|max:255',
-            'last_name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:patients,email',
-            'phone' => 'required|string|max:20',
+        $validated = $request->validate([
+            'first_name'    => 'required|string|max:255',
+            'last_name'     => 'required|string|max:255',
+            'email'         => 'required|email|max:255|unique:patients,email,' . $patient->PatientID . ',PatientID',
+            'phone'         => 'required|string|max:20',
             'date_of_birth' => 'nullable|date',
-            'gender' => 'nullable|in:male,female',
-            'department' => 'nullable|string|max:255',
-            'status' => 'nullable|in:active,inactive',
-            'notes' => 'nullable|string'
+            'gender'        => 'nullable|in:male,female',
+            'department'    => 'nullable|string|max:255',
+            'status'        => 'nullable|in:active,inactive',
+            'notes'         => 'nullable|string',
         ]);
 
-        // ✅ update data
-        $patients->update($validatedData);
+        $patient->update($validated);
 
-        // ✅ optional: update user_id
-        // $patients->user_id = Auth::id();
-        // $patients->save();
-
-        return redirect()
-            ->route('admin.patients.index')
+        return redirect()->route('admin.patients.index')
             ->with('success', 'Patient updated successfully.');
     }
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Patients $patients)
+
+    public function destroy(Patient $patient)
     {
-        //
-    }
-    public function search(Request $request)
-    {
-        $query = $request->input('search');
-        $patients = Patients::where('email', 'like', "%$query%");
-        return view('admin.patients.index', [
-            'patients' => $patients->get(),
-            'query' => $query
-        ]);
+        $patient->delete();
+        return back()->with('success', 'Patient deleted successfully.');
     }
 }

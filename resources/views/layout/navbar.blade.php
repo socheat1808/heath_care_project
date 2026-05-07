@@ -46,31 +46,28 @@
         <li class="nav-item"><a class="nav-link" href="{{route('home')}}#blog_new">News</a></li>
         <li class="nav-item"><a class="nav-link" href="{{route('home')}}#appointment">Contact</a></li>
 
-        @if (Route::has('login'))
-        <nav class="nav-item">
-          @auth
-          <a
-            href="{{ url('/admin.layout') }}"
-            class="nav-link">
-            Dashboard
-          </a>
-          @else
-          <a
-            href="{{ route('login') }}"
-            class="nav-link">
-            Log in
-          </a>
+        @auth
+        @if(Auth::user()->role === 'admin')
+        <a href="{{ route('admin.dashboard') }}" class="nav-link">Dashboard</a>
+        @elseif(Auth::user()->role === 'doctor')
+        <a href="{{ route('dashboard') }}" class="nav-link">Dashboard</a>
+        @else
+        {{-- patient has no dashboard, just show logout --}}
+        <a href="{{ route('home') }}" class="nav-link">Home</a>
+        @endif
 
-          @if (Route::has('register'))
-          <a
-            href="{{ route('register') }}"
-            class="nav-link">
-            Register
-          </a>
-          @endif
-          @endauth
-        </nav>
-        @endif>
+        <form method="POST" action="{{ route('logout') }}" style="display:inline">
+          @csrf
+          <button type="submit" class="nav-link" style="background:none;border:none;cursor:pointer;padding:0">
+            Log out
+          </button>
+        </form>
+        @else
+        <a href="{{ route('login') }}" class="nav-link">Log in</a>
+        @if(Route::has('register'))
+        <a href="{{ route('register') }}" class="nav-link">Register</a>
+        @endif
+        @endauth
       </ul>
     </div>
   </div>

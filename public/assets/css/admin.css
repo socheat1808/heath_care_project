@@ -1524,3 +1524,20 @@ html {
 #our_doctor {
     scroll-margin-top: 100px; /* adjust based on navbar height */
 }
+.nav-item {
+    position: relative; /* ensure badge positions correctly */
+}
+
+.nav-badge {
+    margin-left: auto;
+    background: #d97706; /* amber — matches "pending" colour */
+    color: #fff;
+    font-size: 0.68rem;
+    font-weight: 700;
+    line-height: 1;
+    padding: 0.18rem 0.45rem;
+    border-radius: 99px;
+    min-width: 18px;
+    text-align: center;
+    flex-shrink: 0;
+}

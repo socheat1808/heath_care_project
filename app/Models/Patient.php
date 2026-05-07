@@ -4,8 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Patients extends Model
+class Patient extends Model
 {
+    protected $primaryKey = 'PatientID';
+
+    public function getRouteKeyName()
+    {
+        return 'PatientID';
+    }
     protected $fillable = [
         'user_id',
         'first_name',

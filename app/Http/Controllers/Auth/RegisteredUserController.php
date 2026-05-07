@@ -32,19 +32,25 @@ class RegisteredUserController extends Controller
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'role' => ['required', 'in:patient,doctor'],
         ]);
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'role' => $request->role,
+            'status' => $request->role === 'doctor' ? 'pending' : 'approved',
         ]);
 
         event(new Registered($user));
 
         Auth::login($user);
+        if ($request->role == 'patient') {
+            return redirect()->route('home');
+        }
 
         return redirect(route('dashboard', absolute: false));
     }

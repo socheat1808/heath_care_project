@@ -8,7 +8,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('assets/css/register.css') }}">
-    <!-- <script src="{{ asset('assets/vendor/register.js') }}" defer></script> -->
 </head>
 
 <body>
@@ -29,7 +28,7 @@
                     <p>Start your journey to better health today — it's completely free.</p>
                 </div>
 
-                <!-- ✅ Errors -->
+                <!-- Errors -->
                 @if ($errors->any())
                 <div class="alert-error">
                     @foreach ($errors->all() as $error)
@@ -123,29 +122,53 @@
                         </div>
                         <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
                     </div>
+
                     <!-- USER TYPE -->
                     <div class="field-group mt-3">
-                        <label for="user_type">Register as</label>
+                        <label for="role">Register as</label>
                         <div class="field-wrap">
                             <select
-                                id="user_type"
-                                name="user_type"
+                                id="role"
+                                name="role"
                                 required
-                                class="{{ $errors->has('user_type') ? 'is-invalid' : '' }}">
-
+                                class="{{ $errors->has('role') ? 'is-invalid' : '' }}">
                                 <option value="">-- Select Role --</option>
-                                <option value="patient" {{ old('user_type') == 'patient' ? 'selected' : '' }}>
-                                    Patient
-                                </option>
-                                <option value="doctor" {{ old('user_type') == 'doctor' ? 'selected' : '' }}>
-                                    Doctor
-                                </option>
+                                <option value="patient" {{ old('role') == 'patient' ? 'selected' : '' }}>Patient</option>
+                                <option value="doctor" {{ old('role') == 'doctor'  ? 'selected' : '' }}>Doctor</option>
                             </select>
                         </div>
-
-                        @error('user_type')
+                        @error('role')
                         <span class="field-error">{{ $message }}</span>
                         @enderror
+                    </div>
+
+                    <!-- SPECIALIZATION (doctor only) -->
+                    <div class="field-group mt-3" id="specialization-field" style="display:{{ old('role') == 'doctor' ? 'block' : 'none' }};">
+                        <x-input-label for="specialization" :value="__('Specialization')" />
+                        <div class="field-wrap">
+                            <select
+                                id="specialization"
+                                name="specialization"
+                                class="{{ $errors->has('specialization') ? 'is-invalid' : '' }}">
+                                <option value="">-- Select Specialization --</option>
+                                @foreach([
+                                'General Health',
+                                'Cardiology',
+                                'Dental',
+                                'Neurology',
+                                'Orthopaedics',
+                                'Dermatology',
+                                'Pediatrics',
+                                'Psychiatry',
+                                'Ophthalmology'
+                                ] as $s)
+                                <option value="{{ $s }}" {{ old('specialization') == $s ? 'selected' : '' }}>
+                                    {{ $s }}
+                                </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <x-input-error :messages="$errors->get('specialization')" class="mt-2" />
                     </div>
 
                     <!-- SUBMIT -->
@@ -164,6 +187,18 @@
         </main>
 
     </div>
+
+    <script>
+        const roleSelect = document.getElementById('role');
+        const specField = document.getElementById('specialization-field');
+
+        roleSelect.addEventListener('change', function() {
+            specField.style.display = this.value === 'doctor' ? 'block' : 'none';
+            if (this.value !== 'doctor') {
+                document.getElementById('specialization').value = '';
+            }
+        });
+    </script>
 
 </body>
 

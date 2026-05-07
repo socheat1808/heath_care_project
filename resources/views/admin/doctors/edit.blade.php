@@ -1,6 +1,6 @@
 @extends('admin.layout')
 
-@section('title', 'Add Doctor')
+@section('title', 'Edit Doctor')
 
 @section('content')
 
@@ -13,16 +13,17 @@
                 <a href="{{ route('admin.doctors.index') }}" class="action-btn back-btn">
                     ←
                 </a>
-                <h1>New Doctor</h1>
+                <h1>Edit Doctor</h1>
             </div>
-            <p>Create a doctor profile with professional details.</p>
+            <p>Update Dr. {{ $doctor->first_name }} {{ $doctor->last_name }} profile.</p>
         </div>
     </div>
 
     <!-- Form Card -->
     <div class="form-card">
-        <form action="{{ route('admin.doctors.store') }}" method="POST" enctype="multipart/form-data">
+        <form action="{{ route('admin.doctors.update', $doctor->DoctorID) }}" method="POST" enctype="multipart/form-data">
             @csrf
+            @method('PATCH')
 
             <!-- PERSONAL -->
             <div class="form-section">
@@ -31,33 +32,40 @@
                 <div class="form-grid">
                     <div>
                         <label>First Name</label>
-                        <input type="text" name="first_name" value="{{ old('first_name') }}" placeholder="John" required>
+                        <input type="text" name="first_name" value="{{ old('first_name', $doctor->first_name) }}" required>
                         @error('first_name') <span class="error">{{ $message }}</span> @enderror
                     </div>
 
                     <div>
                         <label>Last Name</label>
-                        <input type="text" name="last_name" value="{{ old('last_name') }}" placeholder="Smith" required>
+                        <input type="text" name="last_name" value="{{ old('last_name', $doctor->last_name) }}" required>
                         @error('last_name') <span class="error">{{ $message }}</span> @enderror
                     </div>
 
                     <div>
                         <label>Email</label>
-                        <input type="email" name="email" value="{{ old('email') }}" placeholder="doctor@email.com" required>
+                        <input type="email" name="email" value="{{ old('email', $doctor->email) }}" required>
                         @error('email') <span class="error">{{ $message }}</span> @enderror
                     </div>
 
                     <div>
                         <label>Phone</label>
-                        <input type="text" name="phone" value="{{ old('phone') }}" placeholder="+855 xxx xxx xxx">
+                        <input type="text" name="phone" value="{{ old('phone', $doctor->phone) }}">
                     </div>
 
                     <!-- PHOTO -->
                     <div class="full">
                         <label>Profile Photo</label>
                         <div class="photo-upload-box" id="photo-box" onclick="document.getElementById('photo').click()">
+                            @if($doctor->photo)
+                            <img id="preview"
+                                src="{{ Storage::url($doctor->photo) }}"
+                                style="width:80px;height:80px;border-radius:50%;object-fit:cover;">
+                            <span id="upload-label" style="font-size:13px;color:#888;">Click to change photo</span>
+                            @else
                             <img id="preview" src="" style="display:none;width:80px;height:80px;border-radius:50%;object-fit:cover;">
                             <span id="upload-label">📷 Click to upload photo</span>
+                            @endif
                         </div>
                         <input type="file" id="photo" name="photo"
                             accept="image/jpg,image/jpeg,image/png,image/webp"
@@ -75,9 +83,10 @@
                     <div>
                         <label>Specialisation</label>
                         <select name="specialization" required>
-                            <option value="">Select</option>
                             @foreach(['General Health','Cardiology','Dental','Neurology','Orthopaedics','Dermatology','Pediatrics','Psychiatry','Ophthalmology'] as $s)
-                            <option value="{{ $s }}" {{ old('specialization')==$s?'selected':'' }}>{{ $s }}</option>
+                            <option value="{{ $s }}" {{ old('specialization', $doctor->specialization)==$s?'selected':'' }}>
+                                {{ $s }}
+                            </option>
                             @endforeach
                         </select>
                     </div>
@@ -85,38 +94,40 @@
                     <div>
                         <label>Status</label>
                         <select name="status" required>
-                            <option value="available">Available</option>
-                            <option value="onleave">On Leave</option>
-                            <option value="unavailable">Unavailable</option>
+                            <option value="available" {{ old('status',$doctor->status)=='available'?'selected':'' }}>Available</option>
+                            <option value="onleave" {{ old('status',$doctor->status)=='onleave'?'selected':'' }}>On Leave</option>
+                            <option value="unavailable" {{ old('status',$doctor->status)=='unavailable'?'selected':'' }}>Unavailable</option>
                         </select>
                     </div>
 
                     <div>
                         <label>Years of Experience</label>
-                        <input type="number" name="years_of_experience" value="{{ old('years_of_experience') }}" placeholder="10">
+                        <input type="number" name="years_of_experience"
+                            value="{{ old('years_of_experience', $doctor->years_of_experience) }}">
                     </div>
 
                     <div>
                         <label>Consultation Fee ($)</label>
-                        <input type="number" name="consultation_fee" value="{{ old('consultation_fee') }}" placeholder="120">
+                        <input type="number" name="consultation_fee"
+                            value="{{ old('consultation_fee', $doctor->consultation_fee) }}">
                     </div>
 
                     <div class="full">
                         <label>Biography / Notes</label>
-                        <textarea name="biography_note" rows="4">{{ old('biography_note') }}</textarea>
+                        <textarea name="biography_note" rows="4">{{ old('biography_note', $doctor->biography_note) }}</textarea>
                     </div>
                 </div>
             </div>
 
             <!-- ACCOUNT -->
             <div class="form-section">
-                <h3>Login Account</h3>
+                <h3>Account Settings</h3>
 
                 <div class="form-grid">
                     <div>
-                        <label>Password</label>
-                        <input type="text" name="password" placeholder="Minimum 8 characters" required>
-                        <span class="hint">Doctor will use this to log in</span>
+                        <label>New Password</label>
+                        <input type="text" name="password" placeholder="Leave blank to keep current password">
+                        <span class="hint">Only fill if you want to change password</span>
                     </div>
                 </div>
             </div>
@@ -124,7 +135,7 @@
             <!-- FOOTER -->
             <div class="form-footer">
                 <a href="{{ route('admin.doctors.index') }}" class="btn-outline">Cancel</a>
-                <button type="submit" class="btn-primary">Save Doctor</button>
+                <button type="submit" class="btn-primary">Update Doctor</button>
             </div>
 
         </form>

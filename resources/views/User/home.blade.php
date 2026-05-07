@@ -22,12 +22,12 @@
 </head>
 <body> -->
 
-  <!-- Back to top button -->
+<!-- Back to top button -->
 
 @extends('layout.main')
 
 @section('content')
-  <!-- HERO -->
+<!-- HERO -->
 <div class="page-hero overlay-dark" style="background:linear-gradient(135deg,#0d2137 0%,#1a4a36 100%)">
   <div class="hero-section">
     <div class="container text-center">
@@ -79,15 +79,15 @@
             <div class="img-place custom-img-1">
               <!-- Placeholder doctor illustration -->
               <svg viewBox="0 0 300 380" width="260" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="150" cy="70" r="55" fill="#1A8A6E" opacity=".15"/>
-                <circle cx="150" cy="65" r="48" fill="#12705A" opacity=".2"/>
-                <ellipse cx="150" cy="200" rx="70" ry="85" fill="#1A8A6E" opacity=".12"/>
-                <circle cx="150" cy="60" r="38" fill="#fff" opacity=".8"/>
+                <circle cx="150" cy="70" r="55" fill="#1A8A6E" opacity=".15" />
+                <circle cx="150" cy="65" r="48" fill="#12705A" opacity=".2" />
+                <ellipse cx="150" cy="200" rx="70" ry="85" fill="#1A8A6E" opacity=".12" />
+                <circle cx="150" cy="60" r="38" fill="#fff" opacity=".8" />
                 <text x="150" y="72" font-size="36" text-anchor="middle" font-family="DM Sans,sans-serif">👨‍⚕️</text>
-                <rect x="90" y="115" width="120" height="140" rx="16" fill="#1A8A6E" opacity=".18"/>
-                <rect x="110" y="135" width="80" height="8" rx="4" fill="#1A8A6E" opacity=".4"/>
-                <rect x="115" y="155" width="70" height="6" rx="3" fill="#1A8A6E" opacity=".3"/>
-                <rect x="120" y="172" width="60" height="6" rx="3" fill="#1A8A6E" opacity=".2"/>
+                <rect x="90" y="115" width="120" height="140" rx="16" fill="#1A8A6E" opacity=".18" />
+                <rect x="110" y="135" width="80" height="8" rx="4" fill="#1A8A6E" opacity=".4" />
+                <rect x="115" y="155" width="70" height="6" rx="3" fill="#1A8A6E" opacity=".3" />
+                <rect x="120" y="172" width="60" height="6" rx="3" fill="#1A8A6E" opacity=".2" />
               </svg>
             </div>
           </div>
@@ -271,14 +271,18 @@
       <div class="col-lg-8">
         <h1 class="font-weight-normal mb-3">Get easy access of all features using One Health Application</h1>
         <a href="#" class="store-btn">
-          <svg viewBox="0 0 24 24" fill="white"><path d="M3 3l18 9-18 9V3z"/></svg>
+          <svg viewBox="0 0 24 24" fill="white">
+            <path d="M3 3l18 9-18 9V3z" />
+          </svg>
           <div class="store-btn-text">
             <span>Get it on</span>
             <span>Google Play</span>
           </div>
         </a>
         <a href="#" class="store-btn">
-          <svg viewBox="0 0 24 24" fill="white"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg>
+          <svg viewBox="0 0 24 24" fill="white">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z" />
+          </svg>
           <div class="store-btn-text">
             <span>Download on the</span>
             <span>App Store</span>
@@ -288,9 +292,9 @@
     </div>
   </div>
 </div>
-  @endsection
+@endsection
 
-  
+
 
 <!-- <script src="../assets/js/jquery-3.5.1.min.js"></script>
 
