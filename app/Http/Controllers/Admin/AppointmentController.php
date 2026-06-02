@@ -4,8 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Appointment;
-use App\Models\AdminDoctor;
-use App\Models\Appointments;
+use App\Models\Doctor;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
@@ -15,7 +14,7 @@ class AppointmentController extends Controller
 {
     public function index(Request $request): View
     {
-        $query = Appointments::with(['patient', 'doctor']);
+        $query = Appointment::with(['patient', 'doctor']);
 
         if ($request->filled('doctor_id')) {
             $query->where('doctor_id', $request->doctor_id);
@@ -35,16 +34,16 @@ class AppointmentController extends Controller
             ->paginate(15)
             ->withQueryString();
 
-        $doctors = AdminDoctor::select('DoctorID', 'first_name', 'last_name')->get();
+        $doctors = Doctor::select('DoctorID', 'first_name', 'last_name')->get();
 
         $stats = [
-            'approved'  => Appointments::where('status', 'approved')->whereDate('appointment_date', today())->count(),
-            'pending'   => Appointments::where('status', 'pending')->count(),
-            'month'     => Appointments::whereMonth('appointment_date', now()->month)->count(),
-            'cancelled' => Appointments::where('status', 'cancelled')->whereDate('appointment_date', today())->count(),
+            'approved'  => Appointment::where('status', 'approved')->whereDate('appointment_date', today())->count(),
+            'pending'   => Appointment::where('status', 'pending')->count(),
+            'month'     => Appointment::whereMonth('appointment_date', now()->month)->count(),
+            'cancelled' => Appointment::where('status', 'cancelled')->whereDate('appointment_date', today())->count(),
         ];
 
-        $calendarData = Appointments::with(['patient', 'doctor'])
+        $calendarData = Appointment::with(['patient', 'doctor'])
             ->whereBetween('appointment_date', [now(), now()->addDays(30)])
             ->whereNotIn('status', ['rejected', 'cancelled'])
             ->get()
@@ -59,7 +58,7 @@ class AppointmentController extends Controller
     }
     public function create(): View
     {
-        $doctors  = AdminDoctor::select('DoctorID', 'first_name', 'last_name', 'specialization', 'consultation_fee')
+        $doctors  = Doctor::select('DoctorID', 'first_name', 'last_name', 'specialization', 'consultation_fee')
             ->where('status', 'available')
             ->get();
 
@@ -83,7 +82,7 @@ class AppointmentController extends Controller
             'notes'            => ['nullable', 'string', 'max:1000'],
         ]);
 
-        Appointments::create([
+        Appointment::create([
             'patient_id'       => $request->PatientID,   // ✅
             'doctor_id'        => $request->DoctorID,     // ✅
             'appointment_date' => $request->appointment_date,
@@ -98,28 +97,68 @@ class AppointmentController extends Controller
     }
 
 
-    public function approve(Appointments $appointment): RedirectResponse
+    public function approve(Appointment $appointment): RedirectResponse
     {
         $appointment->update(['status' => 'approved']);
         return back()->with('success', 'Appointment approved successfully.');
     }
 
-    public function reject(Request $request, Appointments $appointment): RedirectResponse
+    public function reject(Request $request, Appointment $appointment): RedirectResponse
     {
         $request->validate(['rejection_reason' => ['required', 'string', 'max:500']]);
         $appointment->update(['status' => 'rejected', 'rejection_reason' => $request->rejection_reason]);
         return back()->with('success', 'Appointment rejected.');
     }
 
-    public function complete(Appointments $appointment): RedirectResponse
+    public function complete(Appointment $appointment): RedirectResponse
     {
         $appointment->update(['status' => 'completed']);
         return back()->with('success', 'Appointment marked as completed.');
     }
 
-    public function destroy(Appointments $appointment): RedirectResponse
+    public function destroy(Appointment $appointment): RedirectResponse
     {
         $appointment->delete();
         return back()->with('success', 'Appointment deleted.');
+    }
+    //  Dashboard with stats, today's appointments, doctor availability, and recent activity
+
+    public function dashboard(): View
+    {
+        // Stat cards
+        $totalPatients      = User::where('role', 'patient')->count();
+        $totalDoctors       = Doctor::where('status', 'available')->count();
+        $monthAppointments  = Appointment::whereMonth('appointment_date', now()->month)->count();
+        $pendingApprovals   = User::where('role', 'doctor')->where('status', 'pending')->count();
+
+        // Today's appointments
+        $todayAppointments  = Appointment::with(['patient', 'doctor'])
+            ->whereDate('appointment_date', today())
+            ->orderBy('appointment_time')
+            ->get();
+
+        // Doctor availability
+        $doctors = Doctor::where('status', 'available')
+            ->withCount(['appointments as today_count' => function ($q) {
+                $q->whereDate('appointment_date', today());
+            }])
+            ->limit(5)
+            ->get();
+
+        // Recent appointments
+        $recentAppointments = Appointment::with(['patient', 'doctor'])
+            ->orderByDesc('created_at')
+            ->limit(5)
+            ->get();
+
+        return view('admin.dashboard', compact(
+            'totalPatients',
+            'totalDoctors',
+            'monthAppointments',
+            'pendingApprovals',
+            'todayAppointments',
+            'doctors',
+            'recentAppointments',
+        ));
     }
 }

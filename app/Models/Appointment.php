@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Appointments extends Model
+class Appointment extends Model
 {
     protected $table = 'appointments';
 
@@ -30,6 +30,6 @@ class Appointments extends Model
 
     public function doctor()
     {
-        return $this->belongsTo(AdminDoctor::class, 'doctor_id', 'DoctorID'); // ✅
+        return $this->belongsTo(Doctor::class, 'doctor_id', 'DoctorID'); // ✅
     }
 }

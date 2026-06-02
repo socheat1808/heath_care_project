@@ -1,32 +1,7 @@
-<!-- <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-
-  <meta name="copyright" content="MACode ID, https://macodeid.com/">
-
-  <title>One Health - Medical Center HTML5 Template</title>
-
-  <link rel="stylesheet" href="../assets/css/maicons.css">
-
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
-
-  <link rel="stylesheet" href="../assets/vendor/owl-carousel/css/owl.carousel.css">
-
-  <link rel="stylesheet" href="../assets/vendor/animate/animate.css">
-
-  <link rel="stylesheet" href="../assets/css/theme.css">
-</head>
-<body> -->
-
-<!-- Back to top button -->
-
-@extends('layout.main')
+@extends('layouts.main')
 
 @section('content')
+
 <!-- HERO -->
 <div class="page-hero overlay-dark" style="background:linear-gradient(135deg,#0d2137 0%,#1a4a36 100%)">
   <div class="hero-section">
@@ -77,7 +52,6 @@
           </div>
           <div class="col-lg-6">
             <div class="img-place custom-img-1">
-              <!-- Placeholder doctor illustration -->
               <svg viewBox="0 0 300 380" width="260" xmlns="http://www.w3.org/2000/svg">
                 <circle cx="150" cy="70" r="55" fill="#1A8A6E" opacity=".15" />
                 <circle cx="150" cy="65" r="48" fill="#12705A" opacity=".2" />
@@ -101,46 +75,103 @@
 <div class="page-section" id="our_doctor">
   <div class="container">
     <h2 class="text-center mb-5">Our Doctors</h2>
-    <div class="owl-carousel" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:24px">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:24px">
+
+      @php
+      $gradients = [
+      'linear-gradient(135deg,#E8F7F3 0%,#d1ede6 100%)',
+      'linear-gradient(135deg,#EEF2FF 0%,#dde4f7 100%)',
+      'linear-gradient(135deg,#FFF5EE 0%,#fce4d6 100%)',
+      'linear-gradient(135deg,#F0F9FF 0%,#d6eefa 100%)',
+      'linear-gradient(135deg,#FDF4FF 0%,#f0d6fa 100%)',
+      'linear-gradient(135deg,#FFFBEB 0%,#faefc6 100%)',
+      ];
+      @endphp
+
+      @forelse($doctors as $doctor)
+      @php
+      $bg = $gradients[$loop->index % count($gradients)];
+      $initials = strtoupper(substr($doctor->first_name,0,1).substr($doctor->last_name,0,1));
+      @endphp
+
       <div class="card-doctor">
         <div class="header">
-          <div style="width:100%;height:260px;background:linear-gradient(135deg,#E8F7F3 0%,#d1ede6 100%);display:flex;align-items:center;justify-content:center;font-size:72px">👨‍⚕️</div>
+
+          {{-- Photo or fallback --}}
+          <div style="width:120px;height:120px;border-radius:50%;overflow:hidden;margin:0 auto 1rem;
+            border:3px solid #1A8A6E">
+            @if(!empty($doctor->photo))
+            <img src="{{ asset('storage/' . $doctor->photo) }}"
+              style="width:100%;height:100%;object-fit:cover;object-position:top">
+            @else
+            <div style="width:100%;height:100%;background:{{ $bg }};
+                    display:flex;align-items:center;justify-content:center;
+                    font-size:1.5rem;font-weight:700;color:#1A8A6E">
+              {{ $initials }}
+            </div>
+            @endif
+          </div>
+
           <div class="meta">
-            <a href="#">📞</a>
-            <a href="#">💬</a>
+            <a href="tel:{{ $doctor->phone ?? '#' }}">📞</a>
+            <a href="mailto:{{ $doctor->email ?? '#' }}">💬</a>
           </div>
         </div>
+
         <div class="body">
-          <p class="text-xl mb-0">Dr. Stein Albert</p>
-          <span class="text-grey text-sm">Cardiology</span>
-        </div>
-      </div>
-      <div class="card-doctor">
-        <div class="header">
-          <div style="width:100%;height:260px;background:linear-gradient(135deg,#EEF2FF 0%,#dde4f7 100%);display:flex;align-items:center;justify-content:center;font-size:72px">👩‍⚕️</div>
-          <div class="meta">
-            <a href="#">📞</a>
-            <a href="#">💬</a>
+          <p class="text-xl mb-0">Dr. {{ $doctor->first_name }} {{ $doctor->last_name }}</p>
+          <span class="text-grey text-sm">{{ $doctor->specialization }}</span>
+
+          {{-- Book Now button --}}
+          <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+            {{-- TO - checks role properly --}}
+            @auth
+            @if(Auth::user()->role === 'patient')
+            <a href="{{ route('patient.appointments.book', $doctor->DoctorID) }}"
+              style="display:inline-flex;align-items:center;gap:6px;padding:.4rem .9rem;
+                   background:#1A8A6E;color:#fff;border-radius:8px;
+                   font-size:.8rem;font-weight:600;text-decoration:none">
+              📅 Book Now
+            </a>
+            @else
+            <button disabled
+              title="Only patients can book appointments"
+              style="display:inline-flex;align-items:center;gap:6px;padding:.4rem .9rem;
+                   background:#f3f4f6;color:#9ca3af;border:1px solid #e5e7eb;
+                   border-radius:8px;font-size:.8rem;font-weight:600;cursor:not-allowed">
+              📅 Book Now
+            </button>
+            @endif
+            @else
+            <a href="{{ route('login') }}"
+              style="display:inline-flex;align-items:center;gap:6px;padding:.4rem .9rem;
+               background:#1A8A6E;color:#fff;border-radius:8px;
+               font-size:.8rem;font-weight:600;text-decoration:none">
+              📅 Book Now
+            </a>
+            @endauth
+            <a href="{{ route('patient.appointments.doctor-profile', $doctor->DoctorID) }}"
+              style="display:inline-flex;align-items:center;gap:6px;padding:.4rem .9rem;
+                      background:transparent;color:#1A8A6E;border:1px solid #1A8A6E;
+                      border-radius:8px;font-size:.8rem;font-weight:600;text-decoration:none">
+              View Profile
+            </a>
           </div>
         </div>
-        <div class="body">
-          <p class="text-xl mb-0">Dr. Alexa Melvin</p>
-          <span class="text-grey text-sm">Dental</span>
-        </div>
       </div>
-      <div class="card-doctor">
-        <div class="header">
-          <div style="width:100%;height:260px;background:linear-gradient(135deg,#FFF5EE 0%,#fce4d6 100%);display:flex;align-items:center;justify-content:center;font-size:72px">🧑‍⚕️</div>
-          <div class="meta">
-            <a href="#">📞</a>
-            <a href="#">💬</a>
-          </div>
-        </div>
-        <div class="body">
-          <p class="text-xl mb-0">Dr. Rebecca Steffany</p>
-          <span class="text-grey text-sm">General Health</span>
-        </div>
+
+      @empty
+      <div style="grid-column:1/-1;text-align:center;padding:3rem;color:#6b7280;font-size:.95rem">
+        <div style="font-size:48px;margin-bottom:.75rem">👨‍⚕️</div>
+        No doctors available at the moment.
       </div>
+      @endforelse
+
+    </div>
+
+    {{-- View all doctors link --}}
+    <div class="text-center mt-5">
+      <a href="{{ route('doctors') }}" class="btn btn-primary">View All Doctors</a>
     </div>
   </div>
 </div>
@@ -292,19 +323,5 @@
     </div>
   </div>
 </div>
+
 @endsection
-
-
-
-<!-- <script src="../assets/js/jquery-3.5.1.min.js"></script>
-
-<script src="../assets/js/bootstrap.bundle.min.js"></script>
-
-<script src="../assets/vendor/owl-carousel/js/owl.carousel.min.js"></script>
-
-<script src="../assets/vendor/wow/wow.min.js"></script>
-
-<script src="../assets/js/theme.js"></script>
-  
-</body>
-</html> -->

@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
 use App\Models\User;
-use App\Models\AdminDoctor;
+use App\Models\Doctor;
+use App\Http\Controllers\Controller;
 
 class DoctorApprovalController extends Controller
 {
@@ -19,38 +20,31 @@ class DoctorApprovalController extends Controller
 
     public function approveDoctor(User $user)
     {
-        // 1. Approve in users table
         $user->update(['status' => 'approved']);
 
-        // 2. Create or update record in doctors table
         $parts = explode(' ', trim($user->name));
-
-        AdminDoctor::updateOrCreate(
-            ['email' => $user->email], // match by email
+        Doctor::updateOrCreate(
+            ['email' => $user->email],
             [
                 'first_name'          => $parts[0],
                 'last_name'           => implode(' ', array_slice($parts, 1)),
                 'email'               => $user->email,
                 'phone'               => $user->phone ?? null,
-                'specialization'      => 'General Health', // default — doctor can update in profile
-                'status'              => 'available',      // ✅ now shows in admin doctors list
+                'specialization'      => 'General Health',
+                'status'              => 'available',
                 'years_of_experience' => 0,
                 'consultation_fee'    => 0,
                 'schedule_load'       => 0,
             ]
         );
 
-        return back()->with('success', "Dr. {$user->name} has been approved and added to doctors list.");
+        return back()->with('success', "Dr. {$user->name} has been approved.");
     }
 
     public function rejectDoctor(User $user)
     {
-        // 1. Reject in users table
         $user->update(['status' => 'rejected']);
-
-        // 2. Remove from doctors table if exists
-        AdminDoctor::where('email', $user->email)->delete();
-
+        Doctor::where('email', $user->email)->delete();
         return back()->with('success', "Dr. {$user->name} has been rejected.");
     }
 }

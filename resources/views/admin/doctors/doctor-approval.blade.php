@@ -2,7 +2,7 @@
 @section('title', 'Doctor Approvals')
 @section('content')
 
-@php use App\Models\AdminDoctor; @endphp
+@php use App\Models\Doctor; @endphp
 
 <div class="page-content active" id="page-doctor-approvals">
 
@@ -83,7 +83,7 @@
         {{-- ── PENDING ── --}}
         <div class="approval-panel active" id="tab-pending">
             @forelse($pending as $doctor)
-            @php $docProfile = AdminDoctor::where('email', $doctor->email)->first(); @endphp
+            @php $docProfile = Doctor::where('email', $doctor->email)->first(); @endphp
             <div class="doctor-row">
                 <div class="avatar av-amber" style="width:46px;height:46px;font-size:.85rem;flex-shrink:0">
                     {{ strtoupper(substr($doctor->name, 0, 2)) }}
@@ -139,7 +139,7 @@
         {{-- ── APPROVED ── --}}
         <div class="approval-panel" id="tab-approved">
             @forelse($approved as $doctor)
-            @php $docProfile = AdminDoctor::where('email', $doctor->email)->first(); @endphp
+            @php $docProfile = Doctor::where('email', $doctor->email)->first(); @endphp
             <div class="doctor-row">
                 <div class="avatar av-green" style="width:46px;height:46px;font-size:.85rem;flex-shrink:0">
                     {{ strtoupper(substr($doctor->name, 0, 2)) }}
@@ -195,7 +195,7 @@
         {{-- ── REJECTED ── --}}
         <div class="approval-panel" id="tab-rejected">
             @forelse($rejected as $doctor)
-            @php $docProfile = AdminDoctor::where('email', $doctor->email)->first(); @endphp
+            @php $docProfile = Doctor::where('email', $doctor->email)->first(); @endphp
             <div class="doctor-row">
                 <div class="avatar av-pink" style="width:46px;height:46px;font-size:.85rem;flex-shrink:0">
                     {{ strtoupper(substr($doctor->name, 0, 2)) }}

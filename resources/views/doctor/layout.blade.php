@@ -162,6 +162,16 @@
             stroke: var(--sidebar-text);
         }
 
+        .nav-badge {
+            margin-left: auto;
+            background: var(--amber);
+            color: #fff;
+            font-size: .65rem;
+            font-weight: 700;
+            padding: .1rem .4rem;
+            border-radius: 99px;
+        }
+
         .sidebar-bottom {
             margin-top: auto;
             padding: 1rem .75rem;
@@ -350,7 +360,6 @@
 
         .stat-icon.green {
             background: rgba(26, 138, 110, .12);
-            stroke: var(--green);
         }
 
         .stat-icon.green svg {
@@ -467,6 +476,11 @@
             color: var(--purple);
         }
 
+        .badge-gray {
+            background: #f3f4f6;
+            color: #6b7280;
+        }
+
         /* ── BTN ── */
         .btn-primary {
             display: inline-flex;
@@ -494,6 +508,27 @@
             width: 15px;
             height: 15px;
         }
+
+        .btn-outline {
+            display: inline-flex;
+            align-items: center;
+            gap: .4rem;
+            padding: .6rem 1.25rem;
+            border-radius: 10px;
+            background: transparent;
+            color: var(--text);
+            font-size: .875rem;
+            font-weight: 600;
+            border: 1px solid var(--border);
+            cursor: pointer;
+            text-decoration: none;
+            transition: background .15s;
+            font-family: inherit;
+        }
+
+        .btn-outline:hover {
+            background: var(--bg);
+        }
     </style>
 </head>
 
@@ -502,7 +537,7 @@
     <!-- SIDEBAR -->
     <aside class="sidebar">
         <div class="sidebar-logo">
-            <a href="{{ route('doctor-dashboard.index') }}">
+            <a href="{{ route('doctor.layout') }}">
                 <div class="logo-icon">
                     <svg fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
@@ -513,10 +548,11 @@
             </a>
         </div>
 
-        <!-- Overview -->
+        {{-- Overview --}}
         <div class="sidebar-section">
             <div class="sidebar-section-label">Overview</div>
-            <a href="{{ route('doctor-dashboard.index') }}" class="nav-item {{ request()->routeIs('doctor-dashboard.index') ? 'active' : '' }}">
+            <a href="{{ route('doctor.layout') }}"
+                class="nav-item {{ request()->routeIs('doctor.layout') ? 'active' : '' }}">
                 <div class="nav-icon"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
                     </svg></div>
@@ -524,22 +560,37 @@
             </a>
         </div>
 
-        <!-- Practice -->
+        {{-- Practice --}}
         <div class="sidebar-section">
             <div class="sidebar-section-label">Practice</div>
-            <a href="#" class="nav-item {{ request()->routeIs('doctor.appointments.*') ? 'active' : '' }}">
+
+            {{-- ✅ Appointments — real route --}}
+            <a href="{{ route('doctor.appointments.index') }}"
+                class="nav-item {{ request()->routeIs('doctor.appointments.index') ? 'active' : '' }}">
                 <div class="nav-icon"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                     </svg></div>
                 Appointments
+                @php
+                $pendingCount = \App\Models\Appointment::where('doctor_id',
+                optional(\App\Models\Doctor::where('email', Auth::user()->email)->first())->DoctorID
+                )->where('status','pending')->count();
+                @endphp
+                @if($pendingCount > 0)
+                <span class="nav-badge">{{ $pendingCount }}</span>
+                @endif
             </a>
-            <a href="#" class="nav-item {{ request()->routeIs('doctor.patients.*') ? 'active' : '' }}">
+
+            {{-- My Patients (placeholder) --}}
+            <a href="{{ route('doctor.patients.index') }}" class="nav-item {{ request()->routeIs('doctor.patients.index') ? 'active' : '' }}">
                 <div class="nav-icon"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
                     </svg></div>
                 My Patients
             </a>
-            <a href="#" class="nav-item {{ request()->routeIs('doctor.schedule.*') ? 'active' : '' }}">
+
+            {{-- Schedule (placeholder) --}}
+            <a href="{{ route('doctor.schedule.index') }}" class="nav-item {{ request()->routeIs('doctor.schedule.index') ? 'active' : '' }}">
                 <div class="nav-icon"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg></div>
@@ -547,28 +598,42 @@
             </a>
         </div>
 
-        <!-- Account -->
+        {{-- Account --}}
         <div class="sidebar-section">
             <div class="sidebar-section-label">Account</div>
-            <a href="{{ route('doctor-dashboard.profile') }}" class="nav-item {{ request()->routeIs('doctor-dashboard.profile') ? 'active' : '' }}">
+            <a href="{{ route('doctor.profile.edit') }}"
+                class="nav-item {{ request()->routeIs('doctor.profile.edit') ? 'active' : '' }}">
                 <div class="nav-icon"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0z" />
                     </svg></div>
                 My Profile
             </a>
+            <a href="{{ route('home') }}" class="nav-item">
+                <div class="nav-icon">
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+                🌐 Public Site
+            </a>
         </div>
 
-        <!-- Bottom profile + logout -->
+        {{-- Bottom --}}
         <div class="sidebar-bottom">
             <div class="doctor-profile-mini">
                 <div class="doc-avatar">{{ strtoupper(substr(Auth::user()->name, 0, 2)) }}</div>
                 <div class="doc-info">
                     <div class="doc-name">{{ Auth::user()->name }}</div>
-                    <div class="doc-role">Doctor</div>
+                    <div class="doc-role">
+                        @php $doc = \App\Models\Doctor::where('email', Auth::user()->email)->first(); @endphp
+                        {{ $doc->specialization ?? 'Doctor' }}
+                    </div>
                 </div>
                 <form method="POST" action="{{ route('logout') }}" style="margin:0">
                     @csrf
-                    <button type="submit" style="background:none;border:none;cursor:pointer;padding:4px;display:flex;opacity:.5;transition:opacity .15s" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='.5'">
+                    <button type="submit"
+                        style="background:none;border:none;cursor:pointer;padding:4px;display:flex;opacity:.5;transition:opacity .15s"
+                        onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='.5'">
                         <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                         </svg>
@@ -580,23 +645,51 @@
 
     <!-- MAIN -->
     <div class="main">
+        {{-- TO --}}
         <header class="topbar">
             <span class="topbar-title">@yield('title', 'Dashboard')</span>
             <div class="topbar-right">
                 <span class="topbar-date">{{ now()->format('l, d M Y') }}</span>
-                <button class="icon-btn">
+
+                {{-- Bell with real pending count --}}
+                @php
+                $bellCount = \App\Models\Appointment::where('doctor_id',
+                optional(\App\Models\Doctor::where('email', Auth::user()->email)->first())->DoctorID
+                )->where('status', 'pending')->count();
+                @endphp
+                <a href="{{ route('doctor.appointments.index') }}" class="icon-btn" title="{{ $bellCount }} pending appointments">
                     <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                     </svg>
+                    @if($bellCount > 0)
                     <span class="notif-dot"></span>
-                </button>
-                <div style="width:34px;height:34px;border-radius:50%;background:var(--green);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.75rem">
+                    @endif
+                </a>
+
+                {{-- Avatar --}}
+                <div style="width:34px;height:34px;border-radius:50%;background:var(--green);color:#fff;
+                    display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.75rem;">
                     {{ strtoupper(substr(Auth::user()->name, 0, 2)) }}
                 </div>
             </div>
         </header>
 
         <div class="page-content">
+
+            {{-- ← ADD THIS --}}
+            @if(session('error'))
+            <div style="position:fixed;top:1rem;right:1rem;z-index:9999;
+                        background:#fef2f2;border:1px solid #fecaca;border-radius:12px;
+                        padding:.85rem 1.1rem;font-size:.875rem;color:#b91c1c;
+                        display:flex;align-items:center;gap:.65rem;
+                        box-shadow:0 4px 12px rgba(0,0,0,0.1);max-width:360px">
+                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;flex-shrink:0">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                {{ session('error') }}
+            </div>
+            @endif
+
             @yield('content')
         </div>
     </div>

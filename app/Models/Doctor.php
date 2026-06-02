@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class AdminDoctor extends Model
+class Doctor extends Model
 {
     protected $primaryKey = 'DoctorID';
     protected $table = 'doctors';
@@ -23,4 +23,13 @@ class AdminDoctor extends Model
         'photo',
         'password',
     ];
+    public function schedules()
+    {
+        return $this->hasMany(DoctorSchedule::class, 'doctor_id', 'DoctorID');
+    }
+
+    public function appointments()
+    {
+        return $this->hasMany(Appointment::class, 'doctor_id', 'DoctorID');
+    }
 }

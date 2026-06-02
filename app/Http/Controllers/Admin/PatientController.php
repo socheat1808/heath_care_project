@@ -1,13 +1,14 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
 use App\Models\Patient;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\Controller;
 
 
-class PatientsController extends Controller
+class PatientController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -72,7 +73,7 @@ class PatientsController extends Controller
      */
     public function show(Patient $patient)
     {
-        return view('admin.patients.index', compact('patient'));
+        return view('admin.patients.show', compact('patient'));
     }
 
     /**

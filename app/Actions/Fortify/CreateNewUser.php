@@ -3,7 +3,7 @@
 namespace App\Actions\Fortify;
 
 use App\Models\User;
-use App\Models\AdminDoctor;
+use App\Models\Doctor;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
@@ -45,7 +45,7 @@ class CreateNewUser implements CreatesNewUsers
         // ✅ Now create doctor profile BEFORE returning
         if ($input['role'] === 'doctor') {
             $nameParts = explode(' ', trim($input['name']));
-            AdminDoctor::create([
+            Doctor::create([
                 'first_name'          => $nameParts[0],
                 'last_name'           => implode(' ', array_slice($nameParts, 1)),
                 'email'               => $input['email'],

@@ -1,4 +1,4 @@
-@extends('doctor-dashboard.layout') {{-- change to your doctor layout --}}
+@extends('doctor.layout') {{-- change to your doctor layout --}}
 @section('title', 'My Profile')
 @section('content')
 
@@ -78,7 +78,7 @@
     </div>
 
     {{-- Edit Form --}}
-    <form action="{{ route('doctor-dashboard.update-profile') }}" method="POST">
+    <form action="{{ route('doctor.profile.update') }}" method="POST">
         @csrf
         @method('PATCH')
 
