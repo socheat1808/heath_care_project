@@ -67,7 +67,7 @@
 
         @elseif(Auth::user()->role === 'patient')
         <li class="nav-item">
-          <a href="{{ route('patient.layout') }}" class="nav-link">
+          <a href="{{ route('patient.dashboard') }}" class="nav-link">
             👤 Dashboard
           </a>
         </li>

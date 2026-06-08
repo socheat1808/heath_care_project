@@ -52,7 +52,7 @@ class HomeController extends Controller
         $doctors = Doctor::where('status', 'available')->limit(3)->get();
         return view('public.home', compact('doctors'));
     }
-    public function Patientindex(Request $request)
+    public function findDoctors(Request $request)
     {
         $query = Doctor::with('schedules')
             ->orderByRaw("FIELD(status, 'available', 'onleave', 'unavailable')")
@@ -121,7 +121,7 @@ class HomeController extends Controller
         }
 
         if ($user->role === 'admin') {
-            return redirect()->route('admin.layout'); // ← not view()
+            return redirect()->route('admin.dashboard'); // ← not view()
         }
 
         if ($user->role === 'doctor') {

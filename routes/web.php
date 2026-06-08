@@ -11,6 +11,9 @@ use App\Http\Controllers\Admin\AppointmentController as AdminAppointmentControll
 use App\Http\Controllers\ProfileController;
 use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 use App\Http\Controllers\Patient\AppointmentController;
+use App\Http\Controllers\Doctor\LeaveController;
+use App\Http\Controllers\Admin\LeaveController as AdminLeaveController;
+
 
 // ════════════════════════════════════════════════════════════
 // PUBLIC routes (no login required)
@@ -62,6 +65,10 @@ Route::middleware(['auth', 'admin'])
         Route::post('/doctor-approvals/{user}/approve', [DoctorApprovalController::class, 'approveDoctor'])->name('admin.doctors.doctor-approvals.approve');
         Route::post('/doctor-approvals/{user}/reject',  [DoctorApprovalController::class, 'rejectDoctor'])->name('admin.doctors.doctor-approvals.reject');
 
+        Route::get('/leave-requests',                          [AdminLeaveController::class, 'index'])->name('admin.leave.index');
+        Route::patch('/leave-requests/{leaveRequest}/approve', [AdminLeaveController::class, 'approve'])->name('admin.leave.approve');
+        Route::patch('/leave-requests/{leaveRequest}/reject',  [AdminLeaveController::class, 'reject'])->name('admin.leave.reject');
+
         // Appointments
         Route::get('/appointments',                          [AdminAppointmentController::class, 'index'])->name('admin.appointments.index');
         Route::get('/appointments/create',                   [AdminAppointmentController::class, 'create'])->name('admin.appointments.create');
@@ -105,6 +112,10 @@ Route::middleware(['auth', 'doctor.approved'])->group(function () {
 
     Route::get('/doctor-dashboard/patients/{patientId}/notes', [DashboardController::class, 'patientNotes'])
         ->name('doctor.patients.notes');
+
+    Route::get('/doctor-dashboard/leave',          [LeaveController::class, 'index'])->name('doctor.leave.index');
+    Route::post('/doctor-dashboard/leave',         [LeaveController::class, 'store'])->name('doctor.leave.store');
+    Route::delete('/doctor-dashboard/leave/{leaveRequest}', [LeaveController::class, 'cancel'])->name('doctor.leave.cancel');
 });
 
 // ════════════════════════════════════════════════════════════
@@ -121,7 +132,7 @@ Route::middleware(['auth', 'patient'])->group(function () {
         ->name('patient.appointments.index');
 
     // Find doctors
-    Route::get('/find-doctors', [HomeController::class, 'Patientindex'])
+    Route::get('/find-doctors', [HomeController::class, 'findDoctors'])
         ->name('patient.appointments.find-doctors');
 
     // Book appointment form

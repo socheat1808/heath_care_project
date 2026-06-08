@@ -121,23 +121,42 @@
             @endif
           </td>
           <td class="td">
-            <div style="display:flex;align-items:center;gap:.4rem">
+            <div style="display:flex;align-items:center;gap:.45rem">
+
               {{-- Edit --}}
-              <a href="{{ route('admin.doctors.edit', $doctor->DoctorID) }}" class="act-btn act-edit">
+              <a href="{{ route('admin.doctors.edit', $doctor->DoctorID) }}"
+                title="Edit"
+                style="display:inline-flex;align-items:center;justify-content:center;
+               width:30px;height:30px;border-radius:7px;background:var(--bg);
+               border:1px solid var(--border);color:var(--text-muted);text-decoration:none;
+               transition:all .15s"
+                onmouseover="this.style.borderColor='var(--green)';this.style.color='var(--green)'"
+                onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text-muted)'">
                 <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="width:13px;height:13px">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                 </svg>
-                Edit
               </a>
+
               {{-- Delete --}}
               <form method="POST" action="{{ route('admin.doctors.destroy', $doctor->DoctorID) }}">
-                @csrf
-                @method('DELETE')
+                @csrf @method('DELETE')
                 <button type="submit"
-                  class="act-btn act-delete"
-                  data-name="{{ $doctor->first_name }} {{ $doctor->last_name }}"
-                  onclick="return confirm('Delete Dr. ' + this.dataset.name + '? Their login account will also be removed.')">
+                  title="Delete"
+                  onclick="return confirm('Delete Dr. {{ $doctor->first_name }} {{ $doctor->last_name }}? Their login account will also be removed.')"
+                  style="display:inline-flex;align-items:center;justify-content:center;
+                   width:30px;height:30px;border-radius:7px;background:var(--bg);
+                   border:1px solid var(--border);color:var(--text-muted);cursor:pointer;
+                   transition:all .15s"
+                  onmouseover="this.style.borderColor='#ef4444';this.style.color='#ef4444'"
+                  onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text-muted)'">
+                  <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="width:13px;height:13px">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                </button>
               </form>
+
             </div>
           </td>
         </tr>

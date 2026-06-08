@@ -1,4 +1,4 @@
-{{-- resources/views/patients-dashboard/appointments/doctor-profile.blade.php --}}
+{{-- resources/views/patient/appointments/doctor-profile.blade.php --}}
 @extends('patient.layout')
 @section('title', 'Doctor Profile')
 @section('content')

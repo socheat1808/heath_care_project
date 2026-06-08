@@ -211,7 +211,7 @@ $activeDays = optional($doctor->schedules)->where('is_active', true)->count() ??
     <div style="font-size:.875rem;color:var(--text-muted);margin-bottom:1.25rem">
         Try adjusting your search or filters.
     </div>
-    <a href="{{ route('home') }}" class="btn-primary" style="text-decoration:none">
+    <a href="{{ route('patient.doctor.index') }}" class="btn-primary" style="text-decoration:none">
         Clear filters
     </a>
 </div>

@@ -103,7 +103,7 @@
             'completed' => 'Completed',
             'cancelled' => 'Cancelled',
             ] as $val => $label)
-            <a href="#"
+            <a href="{{ route('patient.appointments.index', array_merge(request()->except('page'), ['status' => $val])) }}"
                 style="padding:.35rem .9rem;border-radius:20px;font-size:.78rem;font-weight:600;
                       text-decoration:none;border:1px solid var(--border);transition:all .15s;
                       background:{{ request('status',$val===''?'':request('status')) === $val ? 'var(--green)' : 'transparent' }};
@@ -238,7 +238,7 @@
         <div style="font-size:42px;margin-bottom:.75rem">📅</div>
         <div style="font-size:1rem;font-weight:600;color:var(--text);margin-bottom:.35rem">No appointments found</div>
         <div style="font-size:.875rem;margin-bottom:1.25rem">Book your first appointment with a doctor.</div>
-        <a href="{{ route('patient.doctors.index') }}" class="btn-primary" style="text-decoration:none">Browse Doctors</a>
+        <a href="{{ route('patient.appointments.find-doctors') }}" class="btn-primary" style="text-decoration:none">Browse Doctors</a>
     </div>
     @endforelse
 

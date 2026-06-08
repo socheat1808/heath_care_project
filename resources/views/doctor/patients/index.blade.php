@@ -1,4 +1,4 @@
-{{-- resources/views/doctor-dashboard/my-patients.blade.php --}}
+{{-- resources/views/doctor/patients/index.blade.php --}}
 @extends('doctor.layout')
 @section('title', 'My Patients')
 @section('content')

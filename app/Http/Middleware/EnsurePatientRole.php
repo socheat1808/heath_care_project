@@ -24,7 +24,7 @@ class EnsurePatientRole
             return match ($user->role) {
                 'admin'  => redirect()->route('admin.layout')
                     ->with('error', 'Patients only area.'),
-                'doctor' => redirect()->route('doctor-dashboard.layout')
+                'doctor' => redirect()->route('doctor.layout')
                     ->with('error', 'Patients only area.'),
                 default  => redirect('/'),
             };
