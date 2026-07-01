@@ -13,6 +13,7 @@ use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 use App\Http\Controllers\Patient\AppointmentController;
 use App\Http\Controllers\Doctor\LeaveController;
 use App\Http\Controllers\Admin\LeaveController as AdminLeaveController;
+use app\models\User;
 
 
 // ════════════════════════════════════════════════════════════

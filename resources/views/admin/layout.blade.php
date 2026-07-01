@@ -286,7 +286,7 @@
     </div>{{-- /main --}}
 
     {{-- Scripts --}}
-    <script src="{{ asset('assets/vendor/appadmin.js') }}"></script>
+    <script src="{{ asset('assets/js/admin.js') }}"></script>
     @stack('scripts')
 
 </body>

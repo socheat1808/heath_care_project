@@ -1,218 +1,246 @@
 @extends('admin.layout')
 @section('title', 'Edit Patient')
-
 @section('content')
 
-<div class="page-content active">
+<div class="page-header">
+    <div class="page-header-left">
+        <h1>Edit Patient</h1>
+        <p>Update patient information and reset password if needed.</p>
+    </div>
+    <div style="display:flex;gap:.65rem">
+        <a href="{{ route('admin.patients.show', $patient->id) }}"
+            style="display:inline-flex;align-items:center;gap:.45rem;padding:.55rem 1.1rem;
+                   border:1px solid var(--border);border-radius:10px;color:var(--text-muted);
+                   text-decoration:none;font-size:.85rem;font-weight:600;background:var(--bg)">
+            View History
+        </a>
+        <a href="{{ route('admin.patients.index') }}"
+            style="display:inline-flex;align-items:center;gap:.45rem;padding:.55rem 1.1rem;
+                   border:1px solid var(--border);border-radius:10px;color:var(--text-muted);
+                   text-decoration:none;font-size:.85rem;font-weight:600;background:var(--bg)">
+            ← Back
+        </a>
+    </div>
+</div>
 
-    <!-- Header -->
-    <div class="page-header">
-        <div class="page-header-left">
-            <div style="display:flex;align-items:center;gap:12px;">
-                <a href="{{ route('admin.patients.index') }}" class="back-btn">←</a>
-                <div>
-                    <h1>Edit Patient</h1>
-                    <p>Update patient profile and medical details.</p>
+{{-- Errors --}}
+@if($errors->any())
+<div style="background:#fef2f2;border:1px solid #fecaca;border-radius:12px;padding:.85rem 1.1rem;
+            margin-bottom:1.25rem;font-size:.875rem;color:#b91c1c">
+    <div style="font-weight:700;margin-bottom:.35rem">Please fix the following:</div>
+    <ul style="padding-left:1.25rem;margin:0">
+        @foreach($errors->all() as $e)
+        <li>{{ $e }}</li>
+        @endforeach
+    </ul>
+</div>
+@endif
+
+{{-- Success --}}
+@if(session('success'))
+<div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:12px;padding:.85rem 1.1rem;
+            margin-bottom:1.25rem;font-size:.875rem;color:#15803d;display:flex;align-items:center;gap:.65rem">
+    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;flex-shrink:0">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </svg>
+    {{ session('success') }}
+</div>
+@endif
+
+<div style="display:grid;grid-template-columns:1fr 320px;gap:1.25rem;align-items:start">
+
+    {{-- ── Main Form ── --}}
+    <div class="chart-card" style="margin-bottom:0">
+        <form action="{{ route('admin.patients.update', $patient->id) }}" method="POST">
+            @csrf @method('PUT')
+
+            {{-- Personal Information --}}
+            <div style="margin-bottom:1.75rem">
+                <div style="font-size:.8rem;font-weight:700;text-transform:uppercase;
+                            letter-spacing:.08em;color:var(--text-muted);margin-bottom:1rem;
+                            padding-bottom:.5rem;border-bottom:1px solid var(--border)">
+                    Personal Information
                 </div>
-            </div>
-        </div>
-    </div>
 
-    <!-- Error -->
-    @if($errors->any())
-    <div class="alert-error">
-        <strong>Please fix the following:</strong>
-        <ul>
-            @foreach($errors->all() as $e)
-            <li>{{ $e }}</li>
-            @endforeach
-        </ul>
-    </div>
-    @endif
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
 
-    <!-- Form Card -->
-    <div class="form-card">
-        <form action="{{ route('admin.patients.update', $patient->PatientID) }}" method="POST">
-            @csrf
-            @method('PUT')
-
-            <!-- Personal Info -->
-            <div class="form-section">
-                <h3>Personal Information</h3>
-
-                <div class="form-grid">
-
-                    <div>
-                        <label>First Name</label>
-                        <input type="text" name="first_name"
-                            value="{{ old('first_name', $patient->first_name) }}" required>
+                    {{-- Name --}}
+                    <div style="grid-column:1/-1">
+                        <label style="display:block;font-size:.83rem;font-weight:600;
+                                      color:var(--text-muted);margin-bottom:.45rem">
+                            Full Name <span style="color:#ef4444">*</span>
+                        </label>
+                        <input type="text" name="name"
+                            value="{{ old('name', $patient->name) }}"
+                            required
+                            style="width:100%;padding:.6rem .9rem;border:1px solid var(--border);
+                                   border-radius:10px;background:var(--bg);color:var(--text);
+                                   font-size:.875rem;outline:none;box-sizing:border-box"
+                            onfocus="this.style.borderColor='var(--green)'"
+                            onblur="this.style.borderColor='var(--border)'">
+                        @error('name')
+                        <div style="font-size:.76rem;color:#ef4444;margin-top:.3rem">{{ $message }}</div>
+                        @enderror
                     </div>
 
+                    {{-- Email --}}
                     <div>
-                        <label>Last Name</label>
-                        <input type="text" name="last_name"
-                            value="{{ old('last_name', $patient->last_name) }}" required>
-                    </div>
-
-                    <div>
-                        <label>Email</label>
+                        <label style="display:block;font-size:.83rem;font-weight:600;
+                                      color:var(--text-muted);margin-bottom:.45rem">
+                            Email <span style="color:#ef4444">*</span>
+                        </label>
                         <input type="email" name="email"
-                            value="{{ old('email', $patient->email) }}" required>
+                            value="{{ old('email', $patient->email) }}"
+                            required
+                            style="width:100%;padding:.6rem .9rem;border:1px solid var(--border);
+                                   border-radius:10px;background:var(--bg);color:var(--text);
+                                   font-size:.875rem;outline:none;box-sizing:border-box"
+                            onfocus="this.style.borderColor='var(--green)'"
+                            onblur="this.style.borderColor='var(--border)'">
+                        @error('email')
+                        <div style="font-size:.76rem;color:#ef4444;margin-top:.3rem">{{ $message }}</div>
+                        @enderror
                     </div>
 
+                    {{-- Phone --}}
                     <div>
-                        <label>Phone</label>
+                        <label style="display:block;font-size:.83rem;font-weight:600;
+                                      color:var(--text-muted);margin-bottom:.45rem">
+                            Phone
+                        </label>
                         <input type="text" name="phone"
-                            value="{{ old('phone', $patient->phone) }}">
-                    </div>
-
-                    <div>
-                        <label>Date of Birth</label>
-                        <input type="date" name="date_of_birth"
-                            value="{{ old('date_of_birth', $patient->date_of_birth) }}">
-                    </div>
-
-                    <div>
-                        <label>Gender</label>
-                        <select name="gender">
-                            <option value="">Select</option>
-                            <option value="male" {{ old('gender', $patient->gender) === 'male' ? 'selected' : '' }}>Male</option>
-                            <option value="female" {{ old('gender', $patient->gender) === 'female' ? 'selected' : '' }}>Female</option>
-                        </select>
+                            value="{{ old('phone', $patient->phone) }}"
+                            placeholder="+855 xx xxx xxx"
+                            style="width:100%;padding:.6rem .9rem;border:1px solid var(--border);
+                                   border-radius:10px;background:var(--bg);color:var(--text);
+                                   font-size:.875rem;outline:none;box-sizing:border-box"
+                            onfocus="this.style.borderColor='var(--green)'"
+                            onblur="this.style.borderColor='var(--border)'">
                     </div>
 
                 </div>
             </div>
 
-            <!-- Medical Info -->
-            <div class="form-section">
-                <h3>Medical Information</h3>
+            {{-- Reset Password --}}
+            <div style="margin-bottom:1.75rem">
+                <div style="font-size:.8rem;font-weight:700;text-transform:uppercase;
+                            letter-spacing:.08em;color:var(--text-muted);margin-bottom:1rem;
+                            padding-bottom:.5rem;border-bottom:1px solid var(--border)">
+                    Reset Password
+                    <span style="font-size:.72rem;font-weight:400;text-transform:none;
+                                 letter-spacing:0;color:var(--text-muted);margin-left:.5rem">
+                        (leave blank to keep current)
+                    </span>
+                </div>
 
-                <div class="form-grid">
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
 
                     <div>
-                        <label>Department</label>
-                        <select name="department">
-                            @foreach(['General','Cardiology','Dental','Neurology','Orthopaedics','Dermatology','Pediatrics','Psychiatry','Ophthalmology'] as $dept)
-                            <option value="{{ $dept }}"
-                                {{ old('department', $patient->department) === $dept ? 'selected' : '' }}>
-                                {{ $dept }}
-                            </option>
-                            @endforeach
-                        </select>
+                        <label style="display:block;font-size:.83rem;font-weight:600;
+                                      color:var(--text-muted);margin-bottom:.45rem">
+                            New Password
+                        </label>
+                        <input type="password" name="password"
+                            placeholder="Min 8 characters"
+                            style="width:100%;padding:.6rem .9rem;border:1px solid var(--border);
+                                   border-radius:10px;background:var(--bg);color:var(--text);
+                                   font-size:.875rem;outline:none;box-sizing:border-box"
+                            onfocus="this.style.borderColor='var(--green)'"
+                            onblur="this.style.borderColor='var(--border)'">
+                        @error('password')
+                        <div style="font-size:.76rem;color:#ef4444;margin-top:.3rem">{{ $message }}</div>
+                        @enderror
                     </div>
 
                     <div>
-                        <label>Status</label>
-                        <select name="status">
-                            <option value="active" {{ old('status', $patient->status) === 'active' ? 'selected' : '' }}>Active</option>
-                            <option value="inactive" {{ old('status', $patient->status) === 'inactive' ? 'selected' : '' }}>Inactive</option>
-                        </select>
-                    </div>
-
-                    <div class="full">
-                        <label>Medical Notes</label>
-                        <textarea name="notes" rows="4">{{ old('notes', $patient->notes) }}</textarea>
+                        <label style="display:block;font-size:.83rem;font-weight:600;
+                                      color:var(--text-muted);margin-bottom:.45rem">
+                            Confirm New Password
+                        </label>
+                        <input type="password" name="password_confirmation"
+                            placeholder="Repeat new password"
+                            style="width:100%;padding:.6rem .9rem;border:1px solid var(--border);
+                                   border-radius:10px;background:var(--bg);color:var(--text);
+                                   font-size:.875rem;outline:none;box-sizing:border-box"
+                            onfocus="this.style.borderColor='var(--green)'"
+                            onblur="this.style.borderColor='var(--border)'">
                     </div>
 
                 </div>
             </div>
 
-            <!-- Footer -->
-            <div class="form-footer">
-                <a href="{{ route('admin.patients.index') }}" class="btn-outline">Cancel</a>
-                <button type="submit" class="btn-primary">Update Patient</button>
+            {{-- Footer --}}
+            <div style="display:flex;justify-content:flex-end;gap:.75rem;
+                        padding-top:1.25rem;border-top:1px solid var(--border)">
+                <a href="{{ route('admin.patients.index') }}"
+                    style="padding:.6rem 1.4rem;border:1px solid var(--border);border-radius:10px;
+                           color:var(--text-muted);text-decoration:none;font-size:.875rem;
+                           font-weight:600;background:var(--bg)">
+                    Cancel
+                </a>
+                <button type="submit" class="btn-primary" style="padding:.6rem 1.6rem;font-size:.875rem">
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="width:15px;height:15px">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                    </svg>
+                    Update Patient
+                </button>
             </div>
 
         </form>
     </div>
 
+    {{-- ── Patient Info Sidebar ── --}}
+    <div style="display:flex;flex-direction:column;gap:1rem">
+
+        {{-- Profile card --}}
+        <div class="chart-card" style="margin-bottom:0;text-align:center">
+            <div style="width:64px;height:64px;border-radius:50%;background:var(--green);color:#fff;
+                        display:flex;align-items:center;justify-content:center;
+                        font-size:1.3rem;font-weight:700;margin:0 auto .75rem">
+                {{ strtoupper(substr($patient->name, 0, 2)) }}
+            </div>
+            <div style="font-size:.95rem;font-weight:700;color:var(--text)">{{ $patient->name }}</div>
+            <div style="font-size:.8rem;color:var(--text-muted);margin-bottom:.75rem">{{ $patient->email }}</div>
+            <span class="badge {{ $patient->status === 'approved' ? 'badge-green' : 'badge-red' }}">
+                {{ $patient->status === 'approved' ? 'Active' : ucfirst($patient->status ?? 'active') }}
+            </span>
+        </div>
+
+        {{-- Quick stats --}}
+        <div class="chart-card" style="margin-bottom:0">
+            <div class="card-title" style="margin-bottom:.75rem">Quick Stats</div>
+            @php
+            $total = \App\Models\Appointment::where('patient_id', $patient->id)->count();
+            $completed = \App\Models\Appointment::where('patient_id', $patient->id)->where('status','completed')->count();
+            $pending = \App\Models\Appointment::where('patient_id', $patient->id)->where('status','pending')->count();
+            @endphp
+            <div style="display:flex;flex-direction:column;gap:.5rem">
+                <div style="display:flex;justify-content:space-between;font-size:.83rem;
+                            padding:.4rem 0;border-bottom:1px solid var(--border)">
+                    <span style="color:var(--text-muted)">Total Appointments</span>
+                    <span style="font-weight:700;color:var(--text)">{{ $total }}</span>
+                </div>
+                <div style="display:flex;justify-content:space-between;font-size:.83rem;
+                            padding:.4rem 0;border-bottom:1px solid var(--border)">
+                    <span style="color:var(--text-muted)">Completed</span>
+                    <span style="font-weight:700;color:var(--green)">{{ $completed }}</span>
+                </div>
+                <div style="display:flex;justify-content:space-between;font-size:.83rem;padding:.4rem 0">
+                    <span style="color:var(--text-muted)">Pending</span>
+                    <span style="font-weight:700;color:var(--amber)">{{ $pending }}</span>
+                </div>
+            </div>
+        </div>
+
+        {{-- Joined --}}
+        <div class="chart-card" style="margin-bottom:0">
+            <div style="font-size:.83rem;color:var(--text-muted);margin-bottom:.25rem">Member since</div>
+            <div style="font-size:.875rem;font-weight:600;color:var(--text)">
+                {{ $patient->created_at->format('d M Y') }}
+            </div>
+        </div>
+
+    </div>
 </div>
-
-<style>
-    /* Error */
-    .alert-error {
-        background: rgba(220, 38, 38, .08);
-        color: #DC2626;
-        border: 1px solid rgba(220, 38, 38, .2);
-        border-radius: 10px;
-        padding: .9rem 1.2rem;
-        margin-bottom: 1.2rem;
-        font-size: .85rem;
-    }
-
-    /* Card */
-    .form-card {
-        background: #fff;
-        border-radius: 14px;
-        padding: 1.5rem;
-        border: 1px solid var(--border);
-    }
-
-    /* Sections */
-    .form-section {
-        margin-bottom: 1.8rem;
-    }
-
-    .form-section h3 {
-        font-size: .9rem;
-        font-weight: 700;
-        margin-bottom: 1rem;
-    }
-
-    /* Grid */
-    .form-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 1rem;
-    }
-
-    .form-grid .full {
-        grid-column: 1 / -1;
-    }
-
-    /* Inputs */
-    input,
-    select,
-    textarea {
-        width: 100%;
-        padding: .6rem .8rem;
-        border-radius: 8px;
-        border: 1px solid var(--border);
-        font-size: .85rem;
-    }
-
-    input:focus,
-    select:focus,
-    textarea:focus {
-        outline: none;
-        border-color: var(--green);
-    }
-
-    /* Footer */
-    .form-footer {
-        display: flex;
-        justify-content: flex-end;
-        gap: .7rem;
-        padding-top: 1rem;
-        border-top: 1px solid var(--border);
-    }
-
-    /* Buttons */
-    .btn-outline {
-        padding: .6rem 1.4rem;
-        border-radius: 8px;
-        border: 1px solid var(--border);
-        text-decoration: none;
-    }
-
-    .btn-primary {
-        padding: .6rem 1.4rem;
-        border-radius: 8px;
-        background: var(--green);
-        color: #fff;
-        border: none;
-    }
-</style>
 
 @endsection

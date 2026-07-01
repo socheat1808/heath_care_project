@@ -8,8 +8,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ asset('assets/css/login.css') }}">
-    <script src="{{ asset('assets/vendor/login.js') }}" defer></script>
+    <link rel="stylesheet" href="{{ asset('assets/css/auth.css') }}">
+    <script src="{{ asset('assets/js/auth.js') }}"></script>
 </head>
 
 <body>

@@ -2,21 +2,36 @@
 
 @section('content')
 
-<!-- HERO -->
-<div class="page-hero overlay-dark" style="background:linear-gradient(135deg,#0d2137 0%,#1a4a36 100%)">
+{{-- ══════════════════════════════════════
+     HERO
+══════════════════════════════════════ --}}
+<div class="page-hero overlay-dark"
+  style="background:linear-gradient(135deg,#0d2137 0%,#1a4a36 100%)">
   <div class="hero-section">
     <div class="container text-center">
       <span class="subhead">Let's make your life happier</span>
       <h1>Healthy Living</h1>
-      <a href="#" class="btn btn-primary">Let's Consult</a>
+      @auth
+      @if(Auth::user()->role === 'patient')
+      <a href="{{ route('patient.appointments.find-doctors') }}" class="btn btn-primary">
+        Book Appointment
+      </a>
+      @else
+      <a href="#our_doctor" class="btn btn-primary">Explore Doctors</a>
+      @endif
+      @else
+      <a href="{{ route('register') }}" class="btn btn-primary">Get Started Free</a>
+      @endauth
     </div>
   </div>
 </div>
 
-<!-- SERVICE CARDS -->
+{{-- ══════════════════════════════════════
+     SERVICE CARDS
+══════════════════════════════════════ --}}
 <div class="bg-light">
   <div class="page-section" style="padding-top:0">
-    <div style="margin-top:-3rem;position:relative;z-index:10;padding:0 0 0">
+    <div style="margin-top:-3rem;position:relative;z-index:10">
       <div class="container">
         <div class="row justify-content-center">
           <div class="col-md-4 py-3 py-md-0">
@@ -33,22 +48,26 @@
           </div>
           <div class="col-md-4 py-3 py-md-0">
             <div class="card-service">
-              <div class="circle-shape bg-accent text-white">🛒</div>
-              <p><span>One</span>-Health Pharmacy</p>
+              <div class="circle-shape bg-accent text-white">📅</div>
+              <p><span>Easy</span> Appointment Booking</p>
             </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- WELCOME -->
-    <div class="page-section pb-0" style="margin-top:0" id="about_us">
+    {{-- WELCOME --}}
+    <div class="page-section pb-0" id="about_us">
       <div class="container">
         <div class="row align-items-center">
           <div class="col-lg-6 py-3">
             <h1>Welcome to Your Health <br>Center</h1>
-            <p class="text-grey mb-4" style="margin-top:16px">Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Accusantium aperiam earum.</p>
-            <a href="#" class="btn btn-primary">Learn More</a>
+            <p class="text-grey mb-4" style="margin-top:16px">
+              One Health is a modern medical appointment platform connecting
+              patients with qualified doctors. Book appointments, manage your
+              health, and get the care you need — all in one place.
+            </p>
+            <a href="#our_doctor" class="btn btn-primary">Meet Our Doctors</a>
           </div>
           <div class="col-lg-6">
             <div class="img-place custom-img-1">
@@ -71,7 +90,72 @@
   </div>
 </div>
 
-<!-- DOCTORS -->
+{{-- ══════════════════════════════════════
+     REAL STATS
+══════════════════════════════════════ --}}
+<div class="page-section" style="padding:56px 0;background:#fff">
+  <div class="container">
+    <div class="row text-center">
+      <div class="col-lg-3 col-sm-6 py-3">
+        <h2 style="color:var(--primary);font-size:2.5rem;font-family:var(--font-body);font-weight:700">
+          {{ \App\Models\Doctor::where('status','available')->count() }}+
+        </h2>
+        <p style="font-weight:500;color:var(--gray-600);margin-top:.25rem">Available Doctors</p>
+      </div>
+      <div class="col-lg-3 col-sm-6 py-3">
+        <h2 style="color:var(--primary);font-size:2.5rem;font-family:var(--font-body);font-weight:700">
+          {{ \App\Models\User::where('role','patient')->count() }}+
+        </h2>
+        <p style="font-weight:500;color:var(--gray-600);margin-top:.25rem">Happy Patients</p>
+      </div>
+      <div class="col-lg-3 col-sm-6 py-3">
+        <h2 style="color:var(--primary);font-size:2.5rem;font-family:var(--font-body);font-weight:700">
+          {{ \App\Models\Appointment::where('status','completed')->count() }}+
+        </h2>
+        <p style="font-weight:500;color:var(--gray-600);margin-top:.25rem">Completed Appointments</p>
+      </div>
+      <div class="col-lg-3 col-sm-6 py-3">
+        <h2 style="color:var(--primary);font-size:2.5rem;font-family:var(--font-body);font-weight:700">10+</h2>
+        <p style="font-weight:500;color:var(--gray-600);margin-top:.25rem">Specializations</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+{{-- ══════════════════════════════════════
+     SPECIALIZATIONS
+══════════════════════════════════════ --}}
+<div class="page-section bg-light" id="specializations">
+  <div class="container">
+    <h2 class="text-center mb-5">Our Specializations</h2>
+    <div class="row justify-content-center">
+      @foreach([
+      ['🫀', 'Cardiology'],
+      ['🧠', 'Neurology'],
+      ['🦷', 'Dental'],
+      ['👁️', 'Ophthalmology'],
+      ['🦴', 'Orthopaedics'],
+      ['👶', 'Pediatrics'],
+      ['🩺', 'General Health'],
+      ['🧬', 'Dermatology'],
+      ] as [$icon, $name])
+      <div class="col-lg-3 col-sm-6 py-3">
+        <div class="card-service" style="flex-direction:column;text-align:center;
+                            padding:2rem 1.25rem;justify-content:center">
+          <div style="font-size:2.25rem;margin-bottom:.75rem">{{ $icon }}</div>
+          <p style="font-size:.9rem;font-weight:600;color:var(--gray-900);margin:0">
+            {{ $name }}
+          </p>
+        </div>
+      </div>
+      @endforeach
+    </div>
+  </div>
+</div>
+
+{{-- ══════════════════════════════════════
+     DOCTORS
+══════════════════════════════════════ --}}
 <div class="page-section" id="our_doctor">
   <div class="container">
     <h2 class="text-center mb-5">Our Doctors</h2>
@@ -96,22 +180,19 @@
 
       <div class="card-doctor">
         <div class="header">
-
-          {{-- Photo or fallback --}}
-          <div style="width:120px;height:120px;border-radius:50%;overflow:hidden;margin:0 auto 1rem;
-            border:3px solid #1A8A6E">
+          <div style="width:120px;height:120px;border-radius:50%;overflow:hidden;
+                                margin:1.5rem auto .75rem;border:3px solid var(--primary)">
             @if(!empty($doctor->photo))
-            <img src="{{ asset('storage/' . $doctor->photo) }}"
+            <img src="{{ asset('storage/'.$doctor->photo) }}"
               style="width:100%;height:100%;object-fit:cover;object-position:top">
             @else
             <div style="width:100%;height:100%;background:{{ $bg }};
-                    display:flex;align-items:center;justify-content:center;
-                    font-size:1.5rem;font-weight:700;color:#1A8A6E">
+                                    display:flex;align-items:center;justify-content:center;
+                                    font-size:1.5rem;font-weight:700;color:var(--primary)">
               {{ $initials }}
             </div>
             @endif
           </div>
-
           <div class="meta">
             <a href="tel:{{ $doctor->phone ?? '#' }}">📞</a>
             <a href="mailto:{{ $doctor->email ?? '#' }}">💬</a>
@@ -122,38 +203,66 @@
           <p class="text-xl mb-0">Dr. {{ $doctor->first_name }} {{ $doctor->last_name }}</p>
           <span class="text-grey text-sm">{{ $doctor->specialization }}</span>
 
-          {{-- Book Now button --}}
-          <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
-            {{-- TO - checks role properly --}}
+          {{-- Status --}}
+          <div style="margin-top:.5rem">
+            @if($doctor->status === 'available')
+            <span style="font-size:.72rem;font-weight:600;color:var(--primary);
+                                     background:var(--primary-light);padding:.2rem .65rem;
+                                     border-radius:var(--radius-full)">● Available</span>
+            @elseif($doctor->status === 'onleave')
+            <span style="font-size:.72rem;font-weight:600;color:#D97706;
+                                     background:#fffbeb;padding:.2rem .65rem;
+                                     border-radius:var(--radius-full)">● On Leave</span>
+            @else
+            <span style="font-size:.72rem;font-weight:600;color:#DC2626;
+                                     background:#fef2f2;padding:.2rem .65rem;
+                                     border-radius:var(--radius-full)">● Unavailable</span>
+            @endif
+          </div>
+
+          {{-- Action buttons --}}
+          <div style="margin-top:.85rem;display:flex;gap:8px;flex-wrap:wrap">
             @auth
             @if(Auth::user()->role === 'patient')
+            @if($doctor->status === 'available')
             <a href="{{ route('patient.appointments.book', $doctor->DoctorID) }}"
-              style="display:inline-flex;align-items:center;gap:6px;padding:.4rem .9rem;
-                   background:#1A8A6E;color:#fff;border-radius:8px;
-                   font-size:.8rem;font-weight:600;text-decoration:none">
+              class="btn btn-primary"
+              style="padding:.4rem .9rem;font-size:.8rem;border-radius:var(--radius-full)">
               📅 Book Now
             </a>
             @else
-            <button disabled
-              title="Only patients can book appointments"
-              style="display:inline-flex;align-items:center;gap:6px;padding:.4rem .9rem;
-                   background:#f3f4f6;color:#9ca3af;border:1px solid #e5e7eb;
-                   border-radius:8px;font-size:.8rem;font-weight:600;cursor:not-allowed">
+            <span style="display:inline-flex;align-items:center;padding:.4rem .9rem;
+                                             background:var(--gray-50);color:var(--gray-400);
+                                             border:1px solid var(--gray-100);border-radius:var(--radius-full);
+                                             font-size:.8rem;font-weight:500;cursor:not-allowed">
+              📅 Unavailable
+            </span>
+            @endif
+            @else
+            <span title="Only patients can book"
+              style="display:inline-flex;align-items:center;padding:.4rem .9rem;
+                                       background:var(--gray-50);color:var(--gray-400);
+                                       border:1px solid var(--gray-100);border-radius:var(--radius-full);
+                                       font-size:.8rem;font-weight:500;cursor:not-allowed">
               📅 Book Now
-            </button>
+            </span>
             @endif
             @else
             <a href="{{ route('login') }}"
-              style="display:inline-flex;align-items:center;gap:6px;padding:.4rem .9rem;
-               background:#1A8A6E;color:#fff;border-radius:8px;
-               font-size:.8rem;font-weight:600;text-decoration:none">
+              class="btn btn-primary"
+              style="padding:.4rem .9rem;font-size:.8rem;border-radius:var(--radius-full)">
               📅 Book Now
             </a>
             @endauth
+
             <a href="{{ route('patient.appointments.doctor-profile', $doctor->DoctorID) }}"
-              style="display:inline-flex;align-items:center;gap:6px;padding:.4rem .9rem;
-                      background:transparent;color:#1A8A6E;border:1px solid #1A8A6E;
-                      border-radius:8px;font-size:.8rem;font-weight:600;text-decoration:none">
+              style="display:inline-flex;align-items:center;padding:.4rem .9rem;
+                                   background:transparent;color:var(--primary);
+                                   border:1.5px solid var(--primary);border-radius:var(--radius-full);
+                                   font-size:.8rem;font-weight:500;text-decoration:none;
+                                   transition:all .2s"
+              onmouseover="this.style.background='var(--primary)';this.style.color='#fff'"
+              onmouseout="this.style.background='transparent';this.style.color='var(--primary)'">
               View Profile
             </a>
           </div>
@@ -161,164 +270,234 @@
       </div>
 
       @empty
-      <div style="grid-column:1/-1;text-align:center;padding:3rem;color:#6b7280;font-size:.95rem">
+      <div style="grid-column:1/-1;text-align:center;padding:3rem;color:var(--gray-400)">
         <div style="font-size:48px;margin-bottom:.75rem">👨‍⚕️</div>
         No doctors available at the moment.
       </div>
       @endforelse
-
     </div>
 
-    {{-- View all doctors link --}}
     <div class="text-center mt-5">
       <a href="{{ route('doctors') }}" class="btn btn-primary">View All Doctors</a>
     </div>
   </div>
 </div>
 
-<!-- BLOG -->
-<div class="page-section bg-light" id="blog_new">
+{{-- ══════════════════════════════════════
+     HOW IT WORKS
+══════════════════════════════════════ --}}
+<div class="page-section bg-light" id="how_it_works">
   <div class="container">
-    <h2 class="text-center">Latest News</h2>
-    <div class="row mt-5">
-      <div class="col-lg-4 py-2">
-        <div class="card-blog">
-          <div class="header">
-            <div class="post-category"><a href="#">Covid19</a></div>
-            <a href="#" class="post-thumb">
-              <div style="width:100%;height:210px;background:linear-gradient(135deg,#e8f4fd,#c5e3f7);display:flex;align-items:center;justify-content:center;font-size:60px">🌍</div>
-            </a>
-          </div>
-          <div class="body">
-            <h5 class="post-title" style="color:var(--gray-900);text-transform:none;letter-spacing:0;font-family:var(--font-body)">
-              <a href="#">List of Countries without Coronavirus case</a>
-            </h5>
-            <div class="site-info">
-              <div class="avatar mr-2">
-                <div class="avatar-img">RA</div>
-                <span>Roger Adams</span>
-              </div>
-              ⏱ 1 week ago
-            </div>
-          </div>
+    <h2 class="text-center mb-5">How It Works</h2>
+    <div class="row justify-content-center text-center">
+
+      <div class="col-lg-3 col-sm-6 py-3">
+        <div class="card-service" style="flex-direction:column;align-items:center;
+                            padding:2.5rem 1.5rem;height:100%">
+          <div class="circle-shape bg-primary text-white" style="margin-bottom:1.25rem;
+                                font-size:1.5rem;width:64px;height:64px">👤</div>
+          <div style="font-size:1.5rem;font-weight:700;color:var(--primary);margin-bottom:.35rem">1</div>
+          <h3 style="font-size:.9375rem;margin-bottom:.65rem">Create Account</h3>
+          <p class="text-grey text-sm" style="line-height:1.6;margin:0">
+            Register as a patient in minutes with your basic information.
+          </p>
         </div>
       </div>
-      <div class="col-lg-4 py-2">
-        <div class="card-blog">
-          <div class="header">
-            <div class="post-category"><a href="#">Covid19</a></div>
-            <a href="#" class="post-thumb">
-              <div style="width:100%;height:210px;background:linear-gradient(135deg,#f0fdf4,#bbf7d0);display:flex;align-items:center;justify-content:center;font-size:60px">📰</div>
-            </a>
-          </div>
-          <div class="body">
-            <h5 class="post-title" style="color:var(--gray-900);text-transform:none;letter-spacing:0;font-family:var(--font-body)">
-              <a href="#">Recovery Room: News beyond the pandemic</a>
-            </h5>
-            <div class="site-info">
-              <div class="avatar mr-2">
-                <div class="avatar-img">RA</div>
-                <span>Roger Adams</span>
-              </div>
-              ⏱ 4 weeks ago
-            </div>
-          </div>
+
+      <div class="col-lg-3 col-sm-6 py-3">
+        <div class="card-service" style="flex-direction:column;align-items:center;
+                            padding:2.5rem 1.5rem;height:100%">
+          <div class="circle-shape bg-secondary text-white" style="margin-bottom:1.25rem;
+                                font-size:1.5rem;width:64px;height:64px">🔍</div>
+          <div style="font-size:1.5rem;font-weight:700;color:var(--primary);margin-bottom:.35rem">2</div>
+          <h3 style="font-size:.9375rem;margin-bottom:.65rem">Find a Doctor</h3>
+          <p class="text-grey text-sm" style="line-height:1.6;margin:0">
+            Browse qualified doctors by specialization and availability.
+          </p>
         </div>
       </div>
-      <div class="col-lg-4 py-2">
-        <div class="card-blog">
-          <div class="header">
-            <div class="post-category"><a href="#">Health</a></div>
-            <a href="#" class="post-thumb">
-              <div style="width:100%;height:210px;background:linear-gradient(135deg,#fff7ed,#fed7aa);display:flex;align-items:center;justify-content:center;font-size:60px">🍭</div>
-            </a>
-          </div>
-          <div class="body">
-            <h5 class="post-title" style="color:var(--gray-900);text-transform:none;letter-spacing:0;font-family:var(--font-body)">
-              <a href="#">What is the impact of eating too much sugar?</a>
-            </h5>
-            <div class="site-info">
-              <div class="avatar mr-2">
-                <div class="avatar-img">DS</div>
-                <span>Diego Simmons</span>
-              </div>
-              ⏱ 2 months ago
-            </div>
-          </div>
+
+      <div class="col-lg-3 col-sm-6 py-3">
+        <div class="card-service" style="flex-direction:column;align-items:center;
+                            padding:2.5rem 1.5rem;height:100%">
+          <div class="circle-shape bg-accent text-white" style="margin-bottom:1.25rem;
+                                font-size:1.5rem;width:64px;height:64px">📅</div>
+          <div style="font-size:1.5rem;font-weight:700;color:var(--primary);margin-bottom:.35rem">3</div>
+          <h3 style="font-size:.9375rem;margin-bottom:.65rem">Book Appointment</h3>
+          <p class="text-grey text-sm" style="line-height:1.6;margin:0">
+            Select your preferred date and time and submit your booking.
+          </p>
         </div>
       </div>
-      <div class="col-12 text-center mt-4">
-        <a href="#" class="btn btn-primary">Read More</a>
+
+      <div class="col-lg-3 col-sm-6 py-3">
+        <div class="card-service" style="flex-direction:column;align-items:center;
+                            padding:2.5rem 1.5rem;height:100%">
+          <div class="circle-shape bg-primary text-white" style="margin-bottom:1.25rem;
+                                font-size:1.5rem;width:64px;height:64px">✅</div>
+          <div style="font-size:1.5rem;font-weight:700;color:var(--primary);margin-bottom:.35rem">4</div>
+          <h3 style="font-size:.9375rem;margin-bottom:.65rem">Get Confirmed</h3>
+          <p class="text-grey text-sm" style="line-height:1.6;margin:0">
+            Your doctor reviews and approves your appointment request.
+          </p>
+        </div>
       </div>
+
     </div>
   </div>
 </div>
 
-<!-- APPOINTMENT FORM -->
+
+
+new = '''{{-- ══════════════════════════════════════
+     BOOK APPOINTMENT
+══════════════════════════════════════ --}}
 <div class="page-section" id="appointment">
   <div class="container">
-    <h2 class="text-center">Make an Appointment</h2>
-    <div class="main-form" style="margin-top:3rem">
-      <div class="row mt-5">
-        <div class="col-12 col-sm-6 py-2">
-          <input type="text" class="form-control" placeholder="Full name">
-        </div>
-        <div class="col-12 col-sm-6 py-2">
-          <input type="text" class="form-control" placeholder="Email address..">
-        </div>
-        <div class="col-12 col-sm-6 py-2">
-          <input type="date" class="form-control">
-        </div>
-        <div class="col-12 col-sm-6 py-2">
-          <select class="custom-select">
-            <option>General Health</option>
-            <option>Cardiology</option>
-            <option>Dental</option>
-            <option>Neurology</option>
-            <option>Orthopaedics</option>
-          </select>
-        </div>
-        <div class="col-12 py-2">
-          <input type="text" class="form-control" placeholder="Phone number..">
-        </div>
-        <div class="col-12 py-2">
-          <textarea class="form-control" rows="6" placeholder="Enter message.."></textarea>
+    <h2 class="text-center">Book an Appointment</h2>
+    <p class="text-center text-grey" style="margin-top:.75rem;margin-bottom:3rem">
+      Ready to get started? Follow these simple steps to book with one of our doctors.
+    </p>
+
+    {{-- 3 Step Cards --}}
+    <div class="row justify-content-center" style="margin-bottom:2rem">
+
+      <div class="col-lg-4 col-sm-6 py-3">
+        <div class="card-service" style="flex-direction:column;align-items:center;
+                            text-align:center;padding:2rem 1.5rem;height:100%;position:relative">
+          <div style="position:absolute;top:1rem;right:1rem;
+                                width:26px;height:26px;border-radius:50%;
+                                background:var(--primary-light);color:var(--primary);
+                                display:flex;align-items:center;justify-content:center;
+                                font-size:.8rem;font-weight:700">1</div>
+          <div class="circle-shape bg-primary text-white"
+            style="margin-bottom:1.25rem;font-size:1.5rem;width:60px;height:60px">
+            🔍
+          </div>
+          <h3 style="font-size:.9375rem;font-weight:600;margin-bottom:.65rem;
+                               color:var(--gray-900)">Find a Doctor</h3>
+          <p class="text-grey text-sm" style="line-height:1.6;margin:0">
+            Browse our qualified doctors by specialization and availability.
+          </p>
         </div>
       </div>
-      <button type="submit" class="btn btn-primary" style="margin-top:1.5rem">Submit Request</button>
+
+      <div class="col-lg-4 col-sm-6 py-3">
+        <div class="card-service" style="flex-direction:column;align-items:center;
+                            text-align:center;padding:2rem 1.5rem;height:100%;position:relative">
+          <div style="position:absolute;top:1rem;right:1rem;
+                                width:26px;height:26px;border-radius:50%;
+                                background:var(--primary-light);color:var(--primary);
+                                display:flex;align-items:center;justify-content:center;
+                                font-size:.8rem;font-weight:700">2</div>
+          <div class="circle-shape bg-secondary text-white"
+            style="margin-bottom:1.25rem;font-size:1.5rem;width:60px;height:60px">
+            📅
+          </div>
+          <h3 style="font-size:.9375rem;font-weight:600;margin-bottom:.65rem;
+                               color:var(--gray-900)">Choose Date & Time</h3>
+          <p class="text-grey text-sm" style="line-height:1.6;margin:0">
+            Pick a date and time slot that works best for you.
+          </p>
+        </div>
+      </div>
+
+      <div class="col-lg-4 col-sm-6 py-3">
+        <div class="card-service" style="flex-direction:column;align-items:center;
+                            text-align:center;padding:2rem 1.5rem;height:100%;position:relative">
+          <div style="position:absolute;top:1rem;right:1rem;
+                                width:26px;height:26px;border-radius:50%;
+                                background:var(--primary-light);color:var(--primary);
+                                display:flex;align-items:center;justify-content:center;
+                                font-size:.8rem;font-weight:700">3</div>
+          <div class="circle-shape bg-accent text-white"
+            style="margin-bottom:1.25rem;font-size:1.5rem;width:60px;height:60px">
+            ✅
+          </div>
+          <h3 style="font-size:.9375rem;font-weight:600;margin-bottom:.65rem;
+                               color:var(--gray-900)">Get Confirmed</h3>
+          <p class="text-grey text-sm" style="line-height:1.6;margin:0">
+            Your doctor reviews and approves your appointment request.
+          </p>
+        </div>
+      </div>
+
     </div>
+
+    {{-- CTA Box --}}
+    <div class="main-form text-center" style="max-width:560px;margin:0 auto;padding:2.5rem 2rem">
+      @auth
+      @if(Auth::user()->role === 'patient')
+      <h3 style="margin-bottom:.65rem;color:var(--gray-900)">Ready to Book?</h3>
+      <p class="text-grey" style="margin-bottom:1.5rem">
+        Browse our available doctors and choose the one that fits your needs.
+      </p>
+      <a href="{{ route('patient.appointments.find-doctors') }}" class="btn btn-primary">
+        Browse Doctors & Book
+      </a>
+      @else
+      <h3 style="margin-bottom:.65rem;color:var(--gray-900)">Want to Book?</h3>
+      <p class="text-grey" style="margin-bottom:0">
+        Only patients can book appointments.<br>
+        Please log in with a patient account.
+      </p>
+      @endif
+      @else
+      <h3 style="margin-bottom:.65rem;color:var(--gray-900)">Get Started Today</h3>
+      <p class="text-grey" style="margin-bottom:1.5rem">
+        Create a free account or login to book with any of our doctors.
+      </p>
+      <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap">
+        <a href="{{ route('login') }}" class="btn btn-primary">Login</a>
+        <a href="{{ route('register') }}"
+          style="display:inline-flex;align-items:center;padding:12px 28px;
+                           border:2px solid var(--primary);color:var(--primary);
+                           border-radius:var(--radius-full);font-weight:500;
+                           text-decoration:none;background:transparent;transition:all .2s"
+          onmouseover="this.style.background=\'var(--primary)\';this.style.color=\'#fff\'"
+          onmouseout="this.style.background=\'transparent\';this.style.color=\'var(--primary)\'">
+          Create Account
+        </a>
+      </div>
+      @endauth
+    </div>
+
   </div>
 </div>
 
-<!-- APP BANNER -->
-<div class="banner-home" id="app_banner">
+{{-- ══════════════════════════════════════
+     CTA BANNER
+══════════════════════════════════════ --}}
+<div class="banner-home">
   <div class="container py-5">
     <div class="row align-items-center">
-      <div class="col-lg-4">
-        <div class="img-banner d-none d-lg-block">
-          <div style="display:flex;align-items:flex-end;justify-content:center;height:320px;font-size:160px;transform:translateY(-20px)">📱</div>
+      <div class="col-lg-8">
+        <h1 style="color:#fff;margin-bottom:1.25rem">
+          Ready to take control of your health?
+        </h1>
+        <p style="color:rgba(255,255,255,.7);margin-bottom:2rem;font-size:1rem;max-width:500px">
+          Join thousands of patients who trust One Health for their medical care.
+          Book appointments, track your health, and connect with top doctors.
+        </p>
+        <div style="display:flex;gap:1rem;flex-wrap:wrap">
+          @guest
+          <a href="{{ route('register') }}" class="btn btn-primary">
+            Get Started Free
+          </a>
+          @endguest
+          <a href="#our_doctor"
+            style="display:inline-flex;align-items:center;padding:12px 28px;
+                               border:2px solid rgba(255,255,255,.5);color:#fff;
+                               border-radius:var(--radius-full);font-weight:500;
+                               text-decoration:none;transition:border-color .2s"
+            onmouseover="this.style.borderColor='#fff'"
+            onmouseout="this.style.borderColor='rgba(255,255,255,.5)'">
+            View Doctors
+          </a>
         </div>
       </div>
-      <div class="col-lg-8">
-        <h1 class="font-weight-normal mb-3">Get easy access of all features using One Health Application</h1>
-        <a href="#" class="store-btn">
-          <svg viewBox="0 0 24 24" fill="white">
-            <path d="M3 3l18 9-18 9V3z" />
-          </svg>
-          <div class="store-btn-text">
-            <span>Get it on</span>
-            <span>Google Play</span>
-          </div>
-        </a>
-        <a href="#" class="store-btn">
-          <svg viewBox="0 0 24 24" fill="white">
-            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z" />
-          </svg>
-          <div class="store-btn-text">
-            <span>Download on the</span>
-            <span>App Store</span>
-          </div>
-        </a>
+      <div class="col-lg-4 d-none d-lg-block text-center">
+        <div style="font-size:120px;opacity:.85;margin-top:-20px">🏥</div>
       </div>
     </div>
   </div>
