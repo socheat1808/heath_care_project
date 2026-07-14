@@ -60,6 +60,7 @@ Route::middleware(['auth', 'admin'])
         Route::get('/doctors/{id}/edit', [DashboardController::class, 'edit'])->name('admin.doctors.edit');
         Route::patch('/doctors/{id}',    [DashboardController::class, 'update'])->name('admin.doctors.update');
         Route::delete('/doctors/{id}',   [DashboardController::class, 'destroy'])->name('admin.doctors.destroy');
+        Route::get('/doctors/{id}', [DashboardController::class, 'show'])->name('admin.doctors.show');
 
         // Doctor Approvals
         Route::get('/doctor-approvals',                 [DoctorApprovalController::class, 'index'])->name('admin.doctors.doctor-approvals');

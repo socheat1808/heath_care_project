@@ -156,8 +156,22 @@
                   </svg>
                 </button>
               </form>
+              <a href="{{ route('admin.doctors.show', $doctor->DoctorID) }}" title="View History"
+                style="display:inline-flex;align-items:center;justify-content:center;
+           width:30px;height:30px;border-radius:7px;background:var(--bg);
+           border:1px solid var(--border);color:var(--text-muted);text-decoration:none"
+                onmouseover="this.style.borderColor='var(--green)';this.style.color='var(--green)'"
+                onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text-muted)'">
+                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="width:13px;height:13px">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                </svg>
+              </a>
 
             </div>
+
           </td>
         </tr>
         @empty

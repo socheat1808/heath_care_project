@@ -119,10 +119,12 @@
           </svg>
           <input type="text" name="patient" value="{{ request('patient') }}" placeholder="Search appointments…">
         </div>
+        {{-- Change the doctor dropdown --}}
         <select name="doctor_id" class="filter-select" onchange="this.form.submit()">
           <option value="">All Doctors</option>
-          @foreach ($doctors as $doc)
-          <option value="{{ $doc->id }}" {{ request('doctor_id') == $doc->id ? 'selected' : '' }}>
+          @foreach($doctors as $doc)
+          <option value="{{ $doc->DoctorID }}"
+            {{ request('doctor_id') == $doc->DoctorID ? 'selected' : '' }}>
             Dr. {{ $doc->first_name }} {{ $doc->last_name }}
           </option>
           @endforeach

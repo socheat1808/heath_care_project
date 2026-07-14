@@ -584,4 +584,32 @@ class DashboardController extends Controller
 
         return view('doctor.patients.notes', compact('patient', 'appointments', 'doctor'));
     }
+    public function show($id)
+    {
+        $doctor = Doctor::findOrFail($id);
+
+        $appointments = \App\Models\Appointment::with('patient')
+            ->where('doctor_id', $doctor->DoctorID)
+            ->orderByDesc('appointment_date')
+            ->get();
+
+        $totalAppointments     = $appointments->count();
+        $pendingAppointments   = $appointments->where('status', 'pending')->count();
+        $completedAppointments = $appointments->where('status', 'completed')->count();
+        $cancelledAppointments = $appointments->where('status', 'cancelled')->count();
+        $totalPatients         = $appointments->unique('patient_id')->count();
+
+        $schedules = \App\Models\DoctorSchedule::where('doctor_id', $doctor->DoctorID)->get();
+
+        return view('admin.doctors.show', compact(
+            'doctor',
+            'appointments',
+            'totalAppointments',
+            'pendingAppointments',
+            'completedAppointments',
+            'cancelledAppointments',
+            'totalPatients',
+            'schedules'
+        ));
+    }
 }
