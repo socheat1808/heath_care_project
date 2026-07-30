@@ -8,6 +8,8 @@ use App\Models\Doctor;
 use App\Models\Appointment;
 use App\Models\DoctorSchedule;
 use App\Http\Controllers\Controller;
+use App\Mail\AppointmentBooked;
+use Illuminate\Support\Facades\Mail;
 
 class AppointmentController extends Controller
 {
@@ -83,6 +85,7 @@ class AppointmentController extends Controller
     }
 
     // ── Patient: Store Appointment ───────────────────────
+    // ── Patient: Store Appointment ───────────────────────
     public function store(Request $request)
     {
         $request->validate([
@@ -125,7 +128,8 @@ class AppointmentController extends Controller
             ]);
         }
 
-        Appointment::create([
+        // ── Create appointment ──
+        $appointment = Appointment::create([
             'doctor_id'        => $request->doctor_id,
             'patient_id'       => Auth::id(),
             'appointment_date' => $request->appointment_date,
@@ -135,6 +139,14 @@ class AppointmentController extends Controller
             'notes'            => $request->notes,
             'status'           => 'pending',
         ]);
+
+        // ── Send email to doctor ──
+        try {
+            $appointment->load('patient', 'doctor');
+            Mail::to('chabsocheat2@gmail.com')->send(new AppointmentBooked($appointment));
+        } catch (\Exception $e) {
+            \Log::error('Failed to send appointment booked email: ' . $e->getMessage());
+        }
 
         return redirect()->route('patient.appointments.index')
             ->with('success', 'Appointment requested! You will be notified once approved.');

@@ -10,6 +10,9 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use App\Models\DoctorSchedule;
 use App\Http\Controllers\Controller;
+use App\Mail\AppointmentApproved;
+use App\Mail\AppointmentRejected;
+use Illuminate\Support\Facades\Mail;
 
 class DashboardController extends Controller
 {
@@ -534,15 +537,27 @@ class DashboardController extends Controller
     }
 
     // ── Doctor: Approve Appointment ──────────────────────
+    // ── Doctor: Approve Appointment ──────────────────────
     public function approveAppointment(Appointment $appointment)
     {
         $doctor = Doctor::where('email', Auth::user()->email)->first();
         abort_if($appointment->doctor_id !== $doctor->DoctorID, 403);
 
         $appointment->update(['status' => 'approved']);
+
+        // ── Send email to patient ──
+        try {
+            $appointment->load('patient', 'doctor');
+            Mail::to($appointment->patient->email)
+                ->send(new AppointmentApproved($appointment));
+        } catch (\Exception $e) {
+            \Log::error('Failed to send approval email: ' . $e->getMessage());
+        }
+
         return back()->with('success', 'Appointment approved successfully.');
     }
 
+    // ── Doctor: Reject Appointment ───────────────────────
     // ── Doctor: Reject Appointment ───────────────────────
     public function rejectAppointment(Request $request, Appointment $appointment)
     {
@@ -557,6 +572,15 @@ class DashboardController extends Controller
             'status'           => 'rejected',
             'rejection_reason' => $request->rejection_reason,
         ]);
+
+        // ── Send email to patient ──
+        try {
+            $appointment->load('patient', 'doctor');
+            Mail::to($appointment->patient->email)
+                ->send(new AppointmentRejected($appointment));
+        } catch (\Exception $e) {
+            \Log::error('Failed to send rejection email: ' . $e->getMessage());
+        }
 
         return back()->with('success', 'Appointment rejected.');
     }

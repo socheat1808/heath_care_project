@@ -29,7 +29,7 @@ class DoctorApprovalController extends Controller
                 'first_name'          => $parts[0],
                 'last_name'           => implode(' ', array_slice($parts, 1)),
                 'email'               => $user->email,
-                'phone'               => $user->phone ?? null,
+                'phone'               => $user->phone,
                 'specialization'      => 'General Health',
                 'status'              => 'available',
                 'years_of_experience' => 0,
