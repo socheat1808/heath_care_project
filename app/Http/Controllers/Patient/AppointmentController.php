@@ -143,7 +143,7 @@ class AppointmentController extends Controller
         // ── Send email to doctor ──
         try {
             $appointment->load('patient', 'doctor');
-            Mail::to('chabsocheat2@gmail.com')->send(new AppointmentBooked($appointment));
+            Mail::to($appointment->doctor->email)->send(new AppointmentBooked($appointment));
         } catch (\Exception $e) {
             \Log::error('Failed to send appointment booked email: ' . $e->getMessage());
         }

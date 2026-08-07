@@ -2,34 +2,36 @@
 
 namespace App\Mail;
 
-use App\Models\Appointment;
+use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class AppointmentApproved extends Mailable
+class NewDoctorRegistered extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public function __construct(public Appointment $appointment) {}
+    public function __construct(
+        public User $user,
+        public string $specialization
+    ) {}
 
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Your Appointment is Confirmed — One Health ✅',
+            subject: '🔔 New Doctor Registration — Action Required',
         );
     }
 
     public function content(): Content
     {
         return new Content(
-            markdown: 'emails.appointments.approved',
+            markdown: 'emails.auth.new-doctor-registered',
             with: [
-                'appointment' => $this->appointment,
-                'patient'     => $this->appointment->patient,
-                'doctor'      => $this->appointment->doctor,
+                'user'           => $this->user,
+                'specialization' => $this->specialization,
             ]
         );
     }

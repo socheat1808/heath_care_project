@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Mail\DoctorApproved;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Doctor;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Mail;
 
 class DoctorApprovalController extends Controller
 {
@@ -23,6 +25,7 @@ class DoctorApprovalController extends Controller
         $user->update(['status' => 'approved']);
 
         $parts = explode(' ', trim($user->name));
+
         Doctor::updateOrCreate(
             ['email' => $user->email],
             [
@@ -38,13 +41,21 @@ class DoctorApprovalController extends Controller
             ]
         );
 
-        return back()->with('success', "Dr. {$user->name} has been approved.");
+        // ── Send approval email to doctor ──
+        try {
+            Mail::to($user->email)->send(new DoctorApproved($user));
+        } catch (\Exception $e) {
+            \Log::error('Doctor approval email failed: ' . $e->getMessage());
+        }
+
+        return back()->with('success', "Dr. {$user->name} has been approved and notified by email.");
     }
 
     public function rejectDoctor(User $user)
     {
         $user->update(['status' => 'rejected']);
         Doctor::where('email', $user->email)->delete();
+
         return back()->with('success', "Dr. {$user->name} has been rejected.");
     }
 }

@@ -123,7 +123,7 @@ Route::middleware(['auth', 'doctor.approved'])->group(function () {
 // ════════════════════════════════════════════════════════════
 // PATIENT routes
 // ════════════════════════════════════════════════════════════
-Route::middleware(['auth', 'patient'])->group(function () {
+Route::middleware(['auth', 'verified', 'patient'])->group(function () {
 
     // Dashboard
     Route::get('/patient-dashboard', [AppointmentController::class, 'dashboard'])

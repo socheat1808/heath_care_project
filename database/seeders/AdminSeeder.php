@@ -15,15 +15,14 @@ class AdminSeeder extends Seeder
      */
     public function run(): void
     {
-        User::updateOrCreate(
-            ['email' => 'admin@gmail.com'],
-            [
-                'name'     => 'Admin',
-                'email'    => 'admin@gmail.com',
-                'password' => Hash::make('admin123'),
-                'role'     => 'admin',
-                'status'   => 'approved',
-            ]
-        );
+        // database/seeders/UserSeeder.php
+        User::updateOrCreate(['email' => 'admin.oneheath@gmail.com'], [
+            'name'              => 'One Health Admin',
+            'email'             => 'admin.oneheath@gmail.com',
+            'password'          => Hash::make('admin123'),
+            'role'              => 'admin',
+            'status'            => 'approved',
+            'email_verified_at' => now(),
+        ]);
     }
 }
